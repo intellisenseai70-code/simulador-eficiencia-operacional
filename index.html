@@ -3,55 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Intellisense AI - Ativo de Guerra: Simulador Operacional Nacional (v2.1)</title>
+    <title>Intellisense AI - Ativo de Guerra: Simulador Operacional Nacional (v3.0)</title>
+    <!-- Módulo 2: Tipografia Elevada - Google Fonts --><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Módulo 2: Ícones de Alta Qualidade - Feather Icons (ou Font Awesome se preferir) --><script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+
     <style>
-        /* MÓDULO 3: DESIGN v2.1 - Impacto e Elegância */
+        /* MÓDULO 2: REFINAMENTO VISUAL v3.0 - Luxo e Sofisticação */
         :root {
             --color-primary: #0a84ff; /* Azul mais vibrante */
             --color-danger: #ff453a; /* Vermelho mais intenso */
-            --color-bg-dark: #1c1c1e; /* Fundo quase preto (iOS Dark Mode) */
+            --color-success: #34c759; /* Verde para sucesso/solução */
+            --color-bg-dark: #121212; /* Fundo mais escuro */
+            --color-bg-gradient-start: #1c1c1e;
+            --color-bg-gradient-end: #121212;
             --color-text-light: #f2f2f7;
-            --color-card-bg: #2c2c2e;
-            --color-card-border: #3a3a3c;
-            --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --color-card-bg: rgba(44, 44, 46, 0.6); /* Semi-transparente para Glassmorphism */
+            --color-card-border: rgba(58, 58, 60, 0.4); /* Borda mais sutil */
+            --font-family: 'Manrope', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --backdrop-blur: 15px; /* Intensidade do Glassmorphism */
         }
         body {
             font-family: var(--font-family);
-            background-color: var(--color-bg-dark);
+            background: radial-gradient(circle at top left, var(--color-bg-gradient-start) 0%, var(--color-bg-gradient-end) 100%); /* Módulo 2: Fundo Dinâmico - Gradiente Sutil */
             color: var(--color-text-light);
             margin: 0;
             padding: 2rem;
             line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden; /* Evita scroll horizontal por animações */
         }
         .dashboard {
             max-width: 1200px;
+            width: 100%;
             margin: 0 auto;
             display: grid;
             gap: 2rem;
-            grid-template-columns: repeat(12, 1fr); /* Grid de 12 colunas para flexibilidade */
+            grid-template-columns: repeat(12, 1fr);
+            opacity: 0; /* Para Animação de Entrada */
+            transform: translateY(20px); /* Para Animação de Entrada */
+            animation: fadeInSlideUp 0.8s ease-out forwards;
         }
         .card {
             background-color: var(--color-card-bg);
             padding: 1.5rem;
             border-radius: 12px;
             border: 1px solid var(--color-card-border);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            /* Módulo 2: Efeito "Glassmorphism" */
+            backdrop-filter: blur(var(--backdrop-blur));
+            -webkit-backdrop-filter: blur(var(--backdrop-blur));
         }
         h1, h2, h3 {
             margin-top: 0;
             font-weight: 600;
         }
-        h1 { font-size: 2.5rem; color: white; }
-        h2 { color: var(--color-primary); border-bottom: 1px solid var(--color-card-border); padding-bottom: 0.75rem; margin-bottom: 1rem; font-size: 1.5rem; }
+        h1 { font-size: 2.5rem; color: white; letter-spacing: 0.05em; }
+        h2 { color: var(--color-primary); border-bottom: 1px solid var(--color-card-border); padding-bottom: 0.75rem; margin-bottom: 1rem; font-size: 1.5rem; display: flex; align-items: center;}
+        h2 i { margin-right: 10px; } /* Espaçamento para ícones */
         h3 { font-size: 1.2rem; color: var(--color-text-light); opacity: 0.8; }
 
         /* --- Layout Específico --- */
         .header { grid-column: 1 / -1; text-align: center; margin-bottom: 2rem; }
-        .cost-calculator { grid-column: 1 / -1; text-align: center; } /* Calculadora como Herói */
-        .heatmap { grid-column: 1 / 8; }
-        .ticket-simulator-wrapper { grid-column: 8 / -1; }
+        .cost-calculator { grid-column: 1 / -1; text-align: center; animation-delay: 0.2s; /* Animação de Entrada */ }
+        .heatmap { grid-column: 1 / 8; animation-delay: 0.4s; /* Animação de Entrada */ }
+        .ticket-simulator-wrapper { grid-column: 8 / -1; animation-delay: 0.6s; /* Animação de Entrada */ }
+        .intelligence-panel {
+            grid-column: 1 / -1;
+            margin-top: 1.5rem;
+            display: none; /* Inicia oculto */
+            animation: fadeInSlideUp 0.6s ease-out forwards;
+        }
+        .intelligence-panel h3 { color: var(--color-success); }
+        .intelligence-panel .quote {
+            font-style: italic;
+            border-left: 3px solid var(--color-primary);
+            padding-left: 10px;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+        .intelligence-panel .metric { margin-bottom: 5px; }
+        .intelligence-panel .solution-text {
+            font-weight: 500;
+            color: var(--color-success);
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid var(--color-card-border);
+        }
 
-        /* Calculadora do Custo da Ineficiência - O Ponto Focal */
+        /* Módulo 1: Animação de Entrada */
+        @keyframes fadeInSlideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Calculadora do Custo da Ineficiência */
         #revenue-lost {
             font-size: 5rem; /* MUITO MAIOR */
             color: var(--color-danger);
@@ -65,17 +114,55 @@
             from { transform: scale(1); text-shadow: 0 0 20px rgba(255, 69, 58, 0.4); }
             to { transform: scale(1.03); text-shadow: 0 0 35px rgba(255, 69, 58, 0.8); }
         }
-        input[type="range"] { width: 60%; margin: 1rem auto; }
+        input[type="range"] {
+            width: 60%; margin: 1rem auto;
+            -webkit-appearance: none; /* Remove estilo padrão */
+            appearance: none;
+            height: 8px;
+            background: var(--color-card-border);
+            outline: none;
+            border-radius: 5px;
+            transition: background 0.2s ease;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+            transition: background 0.2s ease;
+        }
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        }
 
-        /* Mapa de Calor de Falhas */
+
+        /* Módulo 1: Interatividade do Mapa de Calor */
         #heatmap-container { display: flex; flex-direction: column; gap: 8px; }
         .bar {
             height: 35px; background: linear-gradient(90deg, var(--color-primary) 0%, #0a84ff88 100%);
             color: white; text-align: left; padding-left: 15px; line-height: 35px;
             border-radius: 6px; font-weight: 500; transition: all 0.3s ease;
             display: flex; justify-content: space-between; padding-right: 15px;
+            cursor: pointer; /* Indica clicável */
+            position: relative;
+            overflow: hidden; /* Para garantir o efeito de expansão suave */
         }
-        .bar:hover { cursor: help; transform: scale(1.02); }
+        .bar:hover { cursor: help; transform: scale(1.02); } /* Manter hover para tooltip */
+        .bar.active-drilldown {
+            transform: scale(1.03);
+            border: 2px solid var(--color-success);
+            box-shadow: 0 0 15px rgba(52, 199, 89, 0.5);
+        }
+        .bar.faded { opacity: 0.3; } /* Para o Drill-Down */
         .bar-label { font-weight: 600; }
         .bar-value { opacity: 0.8; }
 
@@ -83,21 +170,134 @@
         .ticket-simulator-wrapper { display: flex; flex-direction: column; }
         .guest-view input[type="text"], .guest-view button {
             width: 100%; padding: 12px; margin-bottom: 10px; border-radius: 8px; border: 1px solid var(--color-card-border);
-            box-sizing: border-box; /* Garante que o padding não quebre o layout */
+            box-sizing: border-box;
+            background-color: #3a3a3c; color: var(--color-text-light);
         }
-        .guest-view input[type="text"] { background-color: #3a3a3c; color: var(--color-text-light); }
-        .guest-view button { background-color: var(--color-primary); color: white; cursor: pointer; font-weight: 600; border: none; }
+        .guest-view button {
+            background-color: var(--color-primary); color: white; cursor: pointer; font-weight: 600; border: none;
+            transition: transform 0.1s ease; /* Feedback Tátil */
+        }
+        .guest-view button:active { transform: scale(0.98); } /* Feedback Tátil */
+
         .manager-view { flex-grow: 1; max-height: 300px; overflow-y: auto; padding-right: 10px; }
+        .manager-view::-webkit-scrollbar { width: 8px; }
+        .manager-view::-webkit-scrollbar-track { background: var(--color-card-bg); border-radius: 10px; }
+        .manager-view::-webkit-scrollbar-thumb { background: var(--color-card-border); border-radius: 10px; }
+        .manager-view::-webkit-scrollbar-thumb:hover { background: #555; }
+
         .ticket-card {
             background-color: #3a3a3c; padding: 12px; margin-bottom: 10px;
             border-left: 4px solid var(--color-danger); border-radius: 6px; font-size: 0.9rem;
+            opacity: 0; transform: translateY(20px); /* Para Animação de Entrada do Ticket */
+            animation: slideInTicket 0.3s ease-out forwards;
+        }
+        @keyframes slideInTicket {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .ticket-card strong { color: var(--color-primary); }
         .status-open { color: var(--color-danger); font-weight: 700; }
+        .status-solved { color: var(--color-success); font-weight: 700; } /* Novo status */
         .timer { font-weight: 700; }
+        .ticket-card .action-button {
+            background-color: var(--color-success);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 0.8rem;
+            transition: background-color 0.2s ease;
+        }
+        .ticket-card .action-button:hover { background-color: #28a745; }
+        .ticket-card .ia-solution {
+            font-size: 0.85rem;
+            color: var(--color-success);
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px dashed var(--color-card-border);
+        }
+
+        /* Módulo 3: Modo Apresentação */
+        #presentation-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        #presentation-overlay.active { display: flex; opacity: 1; }
+        .presentation-highlight {
+            position: relative;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.7); /* Efeito de escurecimento ao redor */
+            border-radius: 15px;
+            padding: 10px;
+            transition: all 0.5s ease-out;
+            border: 2px solid var(--color-primary);
+            z-index: 1001; /* Acima do overlay */
+        }
+        .presentation-popup {
+            position: absolute;
+            bottom: calc(100% + 15px);
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--color-primary);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            white-space: nowrap;
+            font-size: 1.1rem;
+            font-weight: 500;
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+        }
+        .presentation-popup::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: -10px;
+            transform: translateX(-50%) rotate(45deg);
+            width: 20px;
+            height: 20px;
+            background-color: var(--color-primary);
+            z-index: -1;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        #start-tour-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--color-primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(0, 132, 255, 0.4);
+            transition: transform 0.2s ease, background-color 0.2s ease;
+            z-index: 100;
+        }
+        #start-tour-button:hover {
+            background-color: #007bff;
+            transform: translateY(-2px);
+        }
+        #start-tour-button:active {
+            transform: translateY(0);
+        }
+
     </style>
 </head>
 <body>
+
+    <button id="start-tour-button">Iniciar Tour Guiado</button>
 
     <div class="dashboard">
         <header class="header">
@@ -105,31 +305,41 @@
             <p>Dashboard de Eficiência - A Forja da Persuasão Digital</p>
         </header>
 
-        <div class="card cost-calculator">
-            <h2>💸 Calculadora do Custo da Ineficiência</h2>
+        <div class="card cost-calculator" id="cost-calculator-card">
+            <h2><i data-feather="dollar-sign"></i> Calculadora do Custo da Ineficiência</h2>
             <p>Taxa de Não-Retorno de Clientes Insatisfeitos (Slider)</p>
             <input type="range" id="non-return-rate" min="1" max="50" value="15" step="1">
             <p>Taxa Estimada de Não-Retorno: <span id="rate-display">15</span>%</p>
-            <h3>Receita Anual Perdida:</h3>
+            <h3>Receita Anual Perdida: <span id="category-loss-text" style="font-size: 0.8em; opacity: 0.7;"></span></h3>
             <div id="revenue-lost">R$ 0,00</div>
             <small>*Ticket Médio Anual Definido: R$ 3.500.000 (Base de 10.000 hóspedes).</small>
         </div>
 
-        <div class="card heatmap">
-            <h2>🔥 Mapa de Calor de Falhas (Argos Data)</h2>
+        <div class="card heatmap" id="heatmap-card">
+            <h2><i data-feather="activity"></i> Mapa de Calor de Falhas (Argos Data)</h2>
             <p>Análise de 500 avaliações negativas - Áreas de Maior Severidade</p>
             <div id="heatmap-container">
-                <div class="bar" style="width: 85%;" title="Exemplo: 'Check-in de 1 hora. Inaceitável.'"><span class="bar-label">Check-in</span> <span class="bar-value">(85%)</span></div>
-                <div class="bar" style="width: 70%;" title="Exemplo: 'Toalhas sujas e piscina lotada, sem controle.'"><span class="bar-label">Piscina/Área Externa</span> <span class="bar-value">(70%)</span></div>
-                <div class="bar" style="width: 55%;" title="Exemplo: 'Serviço de quarto demorou 45 minutos para um café.'"><span class="bar-label">Serviço de Quarto</span> <span class="bar-value">(55%)</span></div>
-                <div class="bar" style="width: 40%;" title="Exemplo: 'Ar-condicionado quebrado, tive que ligar 3 vezes.'"><span class="bar-label">Manutenção</span> <span class="bar-value">(40%)</span></div>
-                <div class="bar" style="width: 20%;" title="Exemplo: 'Bar na cobertura caro e garçom confuso.'"><span class="bar-label">A&B</span> <span class="bar-value">(20%)</span></div>
+                <div class="bar" data-category="Check-in" data-severity="85" title="Exemplo: 'Check-in de 1 hora. Inaceitável.'">
+                    <span class="bar-label">Check-in</span> <span class="bar-value">(85%)</span>
+                </div>
+                <div class="bar" data-category="Piscina/Área Externa" data-severity="70" title="Exemplo: 'Toalhas sujas e piscina lotada, sem controle.'">
+                    <span class="bar-label">Piscina/Área Externa</span> <span class="bar-value">(70%)</span>
+                </div>
+                <div class="bar" data-category="Serviço de Quarto" data-severity="55" title="Exemplo: 'Serviço de quarto demorou 45 minutos para um café.'">
+                    <span class="bar-label">Serviço de Quarto</span> <span class="bar-value">(55%)</span>
+                </div>
+                <div class="bar" data-category="Manutenção" data-severity="40" title="Exemplo: 'Ar-condicionado quebrado, tive que ligar 3 vezes.'">
+                    <span class="bar-label">Manutenção</span> <span class="bar-value">(40%)</span>
+                </div>
+                <div class="bar" data-category="A&B" data-severity="20" title="Exemplo: 'Bar na cobertura caro e garçom confuso.'">
+                    <span class="bar-label">A&B</span> <span class="bar-value">(20%)</span>
+                </div>
             </div>
-            <small>Passe o mouse para ver exemplos de reclamações reais (Anonimizadas).</small>
+            <small>Passe o mouse para ver exemplos e **clique para análise profunda**.</small>
         </div>
 
-        <div class="card ticket-simulator-wrapper">
-            <h2>🎫 Simulador de Tickets Inteligentes</h2>
+        <div class="card ticket-simulator-wrapper" id="ticket-simulator-card">
+            <h2 id="ticket-simulator-title"><i data-feather="tag"></i> Simulador de Tickets Inteligentes</h2>
             <div class="guest-view">
                 <h3>Visão do Hóspede</h3>
                 <p>Simulador: App de Reporte Rápido</p>
@@ -143,80 +353,182 @@
                 <div id="ticket-list"></div>
             </div>
         </div>
+
+        <!-- Módulo 3.1: Painel de Inteligência Contextual (Inicia oculto) --><div class="card intelligence-panel" id="intelligence-panel">
+            <h2 id="intelligence-panel-title"><i data-feather="cpu"></i> Inteligência Argos: Análise Profunda</h2>
+            <div id="intelligence-panel-content">
+                <!-- Conteúdo gerado dinamicamente via JS --></div>
+        </div>
     </div>
 
+    <!-- Módulo 3: Modo Apresentação Overlay --><div id="presentation-overlay"></div>
+
     <script>
-        // ... SEU CÓDIGO JAVASCRIPT ORIGINAL E PERFEITO VAI AQUI ...
-        // (Copiado e colado sem nenhuma alteração)
+        // Inicializa Feather Icons
+        feather.replace();
+
+        // Variáveis Globais e Configurações
         let ticketIdCounter = 1;
         const BASE_ANNUAL_REVENUE = 3500000;
         const MAX_CUSTOMERS = 10000;
         const intervalId = setInterval(updateTimers, 1000);
+        let activeCategory = null; // Para Módulo 3.1 Causa-Efeito e Drill-Down
 
+        // --- Elementos DOM ---
         const rateSlider = document.getElementById('non-return-rate');
         const rateDisplay = document.getElementById('rate-display');
         const revenueLostDisplay = document.getElementById('revenue-lost');
-
-        function updateRevenueLost() {
-            const rate = parseInt(rateSlider.value) / 100;
-            rateDisplay.textContent = rateSlider.value;
-            const lostRevenue = Math.round(BASE_ANNUAL_REVENUE * rate);
-            revenueLostDisplay.textContent = 'R$ ' + lostRevenue.toLocaleString('pt-BR');
-        }
-
-        rateSlider.addEventListener('input', updateRevenueLost);
-        updateRevenueLost();
-
+        const categoryLossText = document.getElementById('category-loss-text');
         const reportButton = document.getElementById('report-button');
         const problemInput = document.getElementById('problem-input');
         const ticketList = document.getElementById('ticket-list');
+        const heatmapBars = document.querySelectorAll('.bar');
+        const intelligencePanel = document.getElementById('intelligence-panel');
+        const intelligencePanelTitle = document.getElementById('intelligence-panel-title');
+        const intelligencePanelContent = document.getElementById('intelligence-panel-content');
+        const ticketSimulatorTitle = document.getElementById('ticket-simulator-title');
+
         let tickets = [];
 
+        // --- Módulo 3: Conexão Causa-Efeito & Calculadora do Custo da Ineficiência ---
+        const categorySeverities = { // Dados fictícios para demonstração do impacto
+            "Check-in": { severity: 85, impact: 0.4, quotes: ["Fiquei 45 minutos na fila do check-in com minha família cansada da viagem. Inaceitável para um hotel deste porte.", "O sistema estava 'lento' e o atendente parecia perdido. Uma primeira impressão terrível."], metrics: ["35% das avaliações de 1 e 2 estrelas mencionam 'check-in'.", "Hóspedes que enfrentam um check-in ruim gastam, em média, 15% a menos em serviços extras (A&B, spa) durante a estadia."], solution: "Nossa solução: Um sistema de pré-check-in inteligente via app e totens de autoatendimento que reduzem o tempo de espera em 90%, liberando sua equipe para focar em hospitalidade, não em burocracia." },
+            "Piscina/Área Externa": { severity: 70, impact: 0.3, quotes: ["Toalhas sujas e piscina lotada, sem controle.", "A piscina parece um clube público, não um hotel de luxo."], metrics: ["25% dos clientes que reclamam da piscina não retornam.", "Redução de 10% nas vendas do bar da piscina devido à percepção de superpopulação."], solution: "Nossa solução: Monitoramento inteligente de ocupação e otimização da equipe de limpeza e serviço, garantindo uma experiência exclusiva." },
+            "Serviço de Quarto": { severity: 55, impact: 0.2, quotes: ["Serviço de quarto demorou 45 minutos para um café.", "Meu pedido veio errado e frio."], metrics: ["Cada falha no serviço de quarto reduz a gorjeta média em 20%.", "Atrasos no serviço de quarto geram 18% das reclamações no checkout."], solution: "Nossa solução: Sistema de gestão de pedidos inteligente com roteirização otimizada para equipe e previsão de demanda, reduzindo o tempo de entrega em 70%." },
+            "Manutenção": { severity: 40, impact: 0.15, quotes: ["Ar-condicionado quebrado, tive que ligar 3 vezes.", "Vazamento no banheiro que ninguém resolveu."], metrics: ["Problemas de manutenção não resolvidos resultam em 10% de pedidos de troca de quarto.", "O custo com reparos emergenciais é 3x maior que o da manutenção preventiva."], solution: "Nossa solução: Sensores IoT para monitoramento proativo e plataforma de manutenção preditiva, resolvendo problemas antes que afetem o hóspede." },
+            "A&B": { severity: 20, impact: 0.05, quotes: ["Bar na cobertura caro e garçom confuso.", "Comida sem sabor e atendimento demorado no restaurante."], metrics: ["20% dos hóspedes evitam restaurantes do hotel após uma experiência ruim.", "A baixa qualidade do A&B impacta diretamente a reputação online."], solution: "Nossa solução: Otimização de cardápio baseada em IA para preferências do hóspede e treinamento de equipe focado em excelência no serviço." }
+        };
+
+        function updateRevenueLost() {
+            const baseRate = parseInt(rateSlider.value) / 100;
+            rateDisplay.textContent = rateSlider.value;
+            let currentLostRevenue = 0;
+            let currentLossText = "";
+
+            if (activeCategory && categorySeverities[activeCategory]) {
+                // Cálculo específico para a categoria ativa
+                const categoryImpact = categorySeverities[activeCategory].impact;
+                currentLostRevenue = Math.round(BASE_ANNUAL_REVENUE * baseRate * categoryImpact * (categorySeverities[activeCategory].severity / 100));
+                currentLossText = `Perda estimada apenas por falhas em "${activeCategory}":`;
+            } else {
+                // Cálculo geral
+                currentLostRevenue = Math.round(BASE_ANNUAL_REVENUE * baseRate);
+                currentLossText = "";
+            }
+            
+            revenueLostDisplay.textContent = 'R$ ' + currentLostRevenue.toLocaleString('pt-BR');
+            categoryLossText.textContent = currentLossText;
+        }
+
+        rateSlider.addEventListener('input', updateRevenueLost);
+        updateRevenueLost(); // Inicializa o cálculo
+
+        // --- Módulo 3.1: Drill-Down Diagnóstico no Mapa de Calor ---
+        heatmapBars.forEach(bar => {
+            bar.addEventListener('click', () => {
+                const category = bar.dataset.category;
+                
+                // Resetar estados anteriores
+                heatmapBars.forEach(b => {
+                    b.classList.remove('active-drilldown', 'faded');
+                    b.style.width = `${b.dataset.severity}%`; // Resetar largura visual
+                    b.style.opacity = '1';
+                });
+                intelligencePanel.style.display = 'none'; // Esconder painel de inteligência
+
+                if (activeCategory === category) {
+                    // Se clicar na mesma categoria, desativar drill-down
+                    activeCategory = null;
+                    ticketSimulatorTitle.innerHTML = `<i data-feather="tag"></i> Simulador de Tickets Inteligentes`;
+                    problemInput.placeholder = "Qual o problema? Ex: 'Ar-condicionado não gela.'";
+                } else {
+                    // Ativar drill-down
+                    activeCategory = category;
+                    bar.classList.add('active-drilldown');
+                    heatmapBars.forEach(b => {
+                        if (b !== bar) {
+                            b.classList.add('faded');
+                            b.style.width = '20%'; // Diminuir outras barras visualmente
+                            b.style.opacity = '0.4';
+                        }
+                    });
+
+                    // Atualizar Simulador de Tickets
+                    ticketSimulatorTitle.innerHTML = `<i data-feather="tag"></i> Simulando uma Falha de ${category}`;
+                    
+                    const problemPlaceholder = {
+                        "Check-in": "Ex: 'Fila enorme, apenas um atendente.'",
+                        "Piscina/Área Externa": "Ex: 'Piscina muito cheia, sem toalhas limpas.'",
+                        "Serviço de Quarto": "Ex: 'Comida fria e entregue com atraso.'",
+                        "Manutenção": "Ex: 'Lâmpada queimada e vazamento no banheiro.'",
+                        "A&B": "Ex: 'Drinks caros e garçom demorado no bar.'"
+                    };
+                    problemInput.placeholder = problemPlaceholder[category] || "Qual o problema? Ex: 'Ar-condicionado não gela.'";
+
+                    // Ativar Painel de Inteligência Contextual
+                    renderIntelligencePanel(category);
+                }
+                updateRevenueLost(); // Recalcular com base na categoria ativa
+                feather.replace(); // Re-renderizar ícones se necessário
+            });
+        });
+
+        function renderIntelligencePanel(category) {
+            const data = categorySeverities[category];
+            if (!data) return;
+
+            intelligencePanelTitle.innerHTML = `<i data-feather="cpu"></i> Inteligência Argos: Análise Profunda de '${category}'`;
+            let contentHtml = `
+                <h4>Citações Reais (A Dor Qualitativa):</h4>
+                ${data.quotes.map(q => `<p class="quote">"${q}"</p>`).join('')}
+                <h4>Métricas de Impacto (A Dor Quantitativa):</h4>
+                ${data.metrics.map(m => `<p class="metric">${m}</p>`).join('')}
+                <h4>A Nossa Solução (A Cura):</h4>
+                <p class="solution-text">${data.solution}</p>
+            `;
+            intelligencePanelContent.innerHTML = contentHtml;
+            intelligencePanel.style.display = 'block';
+            intelligencePanel.scrollIntoView({ behavior: 'smooth', block: 'start' }); // Scroll para o painel
+        }
+
+
+        // --- Lógica do Simulador de Tickets Inteligentes (Módulo 1: Feedback Tátil) ---
         reportButton.addEventListener('click', () => {
             const problemText = problemInput.value.trim();
             if (problemText === '') return;
+
             const newTicket = {
                 id: `IS-2025${String(ticketIdCounter++).padStart(4, '0')}`,
                 problem: problemText,
                 status: 'ABERTO',
                 startTime: Date.now(),
+                elapsedTime: 0
             };
-            tickets.push(newTicket);
+
+            tickets.unshift(newTicket); // Adiciona no início para aparecer em cima
             renderTicket(newTicket);
-            problemInput.value = '';
+            problemInput.value = ''; // Limpa o formulário
+
+            // Feedback Tátil (já implementado via CSS :active)
         });
 
         function renderTicket(ticket) {
             const ticketCard = document.createElement('div');
             ticketCard.className = 'ticket-card';
             ticketCard.dataset.ticketId = ticket.id;
+            
+            // Adicionando botão de ação para "Resposta Inteligente"
             ticketCard.innerHTML = `
-                <strong>ID: ${ticket.id}</strong>  
-
-                Problema: ${ticket.problem}  
-
+                <strong>ID: ${ticket.id}</strong><br>
+                Problema: ${ticket.problem}<br>
                 Status: <span class="status-open">${ticket.status}</span> | Tempo de Resposta: <span class="timer" data-id="${ticket.id}">00:00</span>
+                <button class="action-button" data-id="${ticket.id}">Solução Inteligente (IA)</button>
             `;
-            ticketList.prepend(ticketCard);
+            
+            ticketList.prepend(ticketCard); // Novo ticket desliza para a lista (Módulo 1)
         }
-
-        function updateTimers() {
-            const timers = document.querySelectorAll('.timer');
-            timers.forEach(timerElement => {
-                const ticketId = timerElement.dataset.id;
-                const ticket = tickets.find(t => t.id === ticketId);
-                if (ticket && ticket.status === 'ABERTO') {
-                    const elapsed = Math.floor((Date.now() - ticket.startTime) / 1000);
-                    const minutes = String(Math.floor(elapsed / 60)).padStart(2, '0');
-                    const seconds = String(elapsed % 60).padStart(2, '0');
-                    timerElement.textContent = `${minutes}:${seconds}`;
-                    if (elapsed > 120) {
-                        timerElement.style.color = 'yellow';
-                        timerElement.parentElement.style.borderLeftColor = 'yellow';
-                    }
-                }
-            });
-        }
-    </script>
-</body>
-</html>
+        
+        // --- Ação "Solução Inteligente (IA)" nos Tickets (Adição V2.1 + Refinamento V3.0) ---
+        ticketList.addEventListener('click', (event) => {
+            if (event.target.classList.contains('action-button')) {
+                const ticketId = event.target.
