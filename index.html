@@ -1,376 +1,42 @@
-import { useState, useEffect } from 'react';
-import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { ChevronDown, TrendingDown, AlertCircle, Zap, DollarSign, Clock } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import NotFound from "@/pages/NotFound";
+import { Route, Switch } from "wouter";
+import ErrorBoundary from "./components/ErrorBoundary";
+import { ThemeProvider } from "./contexts/ThemeContext";
+import Home from "./pages/Home";
 
-const COLORS = ['#ef4444', '#f97316', '#eab308', '#84cc16', '#22c55e'];
 
-const swotData = {
-  "Check-in": {
-    strengths: [
-      { title: "Localização Icônica", detail: "Atrai público de alto poder aquisitivo" },
-      { title: "Marca Premium", detail: "Assegura base fiel de clientes" }
-    ],
-    weaknesses: [
-      { metric: "Tempo de Espera", value: "35 min", impact: "70% acima da média" },
-      { metric: "Taxa de Reclamação", value: "35%", impact: "Desvia 40h/semana da equipe" }
-    ],
-    opportunities: [
-      { title: "Pré-Check-in via App", detail: "Redução de 90% no tempo" },
-      { title: "Upsells Personalizados", detail: "ROI de 150% no primeiro ano" }
-    ],
-    threats: [
-      { title: "Perda de Clientes", detail: "25% dos clientes com má impressão inicial" },
-      { title: "Concorrência", detail: "Fairmont, Copacabana já usam tecnologia" }
-    ]
-  },
-  "Piscina/Área Externa": {
-    strengths: [
-      { title: "Design Deslumbrante", detail: "60% do engajamento em redes sociais" },
-      { title: "Amplo Espaço", detail: "500m² para 150 pessoas" }
-    ],
-    weaknesses: [
-      { metric: "Ocupação Crítica", value: "70%", impact: "Superlotação em fins de semana" },
-      { metric: "Tempo de Limpeza", value: "Alto", impact: "40% das reclamações após 14h" }
-    ],
-    opportunities: [
-      { title: "Monitoramento IA", detail: "Mitigar superlotação com 30min antecedência" },
-      { title: "Day Use Premium", detail: "+R$ 10.000/semana" }
-    ],
-    threats: [
-      { title: "Perda de Exclusividade", detail: "Risco de queda de 20% nas reservas" },
-      { title: "Normas Sanitárias", detail: "Risco de multas" }
-    ]
-  },
-  "Serviço de Quarto": {
-    strengths: [
-      { title: "Alta Margem", detail: "50% de margem líquida potencial" },
-      { title: "Conveniência Exclusiva", detail: "Essencial para percepção 5 estrelas" }
-    ],
-    weaknesses: [
-      { metric: "Tempo de Entrega", value: "48 min", impact: "75% chegam com qualidade comprometida" },
-      { metric: "Taxa de Erro", value: "18%", impact: "Custa R$ 5.000/mês" }
-    ],
-    opportunities: [
-      { title: "Pedidos via QR/App", detail: "Reduz tempo em 40%" },
-      { title: "Upselling Automatizado", detail: "+15% no ticket médio" }
-    ],
-    threats: [
-      { title: "Concorrência de Apps", detail: "iFood é 2x mais rápido" },
-      { title: "Reputação", detail: "Avaliações negativas impactam ranking" }
-    ]
-  },
-  "Manutenção": {
-    strengths: [
-      { title: "Equipe Qualificada", detail: "8+ anos de experiência" }
-    ],
-    weaknesses: [
-      { metric: "MTTR", value: "3h 15min", impact: "Inaceitável para luxo" },
-      { metric: "Reincidência", value: "22%", impact: "Diagnóstico superficial" }
-    ],
-    opportunities: [
-      { title: "Diagnóstico via App", detail: "Reduz tempo em 50%" },
-      { title: "Manutenção Preditiva", detail: "Elimina 80% das reclamações" }
-    ],
-    threats: [
-      { title: "Destruição da Percepção", detail: "90% das avaliações 1 estrela" },
-      { title: "Falhas Estruturais", detail: "Risco de reparos de R$ 50.000" }
-    ]
-  },
-  "A&B": {
-    strengths: [
-      { title: "Localização Privilegiada", detail: "Potencial para bares icônicos" },
-      { title: "Público Cativo", detail: "Alto poder aquisitivo" }
-    ],
-    weaknesses: [
-      { metric: "Ocupação", value: "25%", impact: "75% preferem jantar fora" },
-      { metric: "Reclamações", value: "40%", impact: "Preço injusto" }
-    ],
-    opportunities: [
-      { title: "Análise de Sentimento", detail: "+10% no lucro" },
-      { title: "Fidelidade Digital", detail: "+20% de tráfego" }
-    ],
-    threats: [
-      { title: "Concorrência", detail: "Zona Sul força competição" },
-      { title: "Visibilidade Online", detail: "Apenas 5% de reservas online" }
-    ]
-  }
-};
-
-const heatmapData = [
-  { name: 'Check-in', value: 35, color: '#ef4444' },
-  { name: 'Piscina/Área Externa', value: 25, color: '#f97316' },
-  { name: 'Serviço de Quarto', value: 20, color: '#eab308' },
-  { name: 'Manutenção', value: 15, color: '#84cc16' },
-  { name: 'A&B', value: 5, color: '#22c55e' }
-];
-
-const roiData = [
-  { name: 'Perda Anual', value: 612500 },
-  { name: 'Ganho com Upsell', value: 280000 },
-  { name: 'Custo da Solução', value: 120000 },
-  { name: 'ROI Líquido (Ano 1)', value: 160000 }
-];
-
-export default function Home() {
-  const [sliderValue, setSliderValue] = useState(15);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [swotOpen, setSwotOpen] = useState(false);
-  const [revenueLoss, setRevenueLoss] = useState(525000);
-
-  const BASE_ANNUAL_REVENUE = 3500000;
-
-  useEffect(() => {
-    const baseRate = sliderValue / 100;
-    let loss = BASE_ANNUAL_REVENUE * baseRate;
-    
-    if (selectedCategory && swotData[selectedCategory as keyof typeof swotData]) {
-      const categoryData = swotData[selectedCategory as keyof typeof swotData];
-      const impact = heatmapData.find(d => d.name === selectedCategory)?.value || 0;
-      loss = loss * (impact / 100);
-    }
-    
-    setRevenueLoss(Math.round(loss));
-  }, [sliderValue, selectedCategory]);
-
-  const handleCategoryClick = (category: string) => {
-    setSelectedCategory(category);
-    setSwotOpen(true);
-  };
-
-  const currentSwot = selectedCategory && swotData[selectedCategory as keyof typeof swotData] ? swotData[selectedCategory as keyof typeof swotData] : null;
-
+function Router() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
-      {/* Header */}
-      <header className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-6 py-8">
-          <div className="flex flex-col gap-2">
-            <h1 className="text-4xl font-bold text-white">Intellisense AI</h1>
-            <p className="text-slate-400">Simulador de Eficiência Operacional • Hotel Nacional</p>
-            <p className="text-sm text-slate-500">Dashboard de Análise Operacional v1.0</p>
-          </div>
-        </div>
-      </header>
-
-      <main className="max-w-7xl mx-auto px-6 py-12">
-        {/* Calculator Section */}
-        <div className="mb-12">
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl border border-slate-700 p-8 shadow-2xl">
-            <div className="flex items-center gap-3 mb-8">
-              <DollarSign className="w-6 h-6 text-blue-400" />
-              <h2 className="text-2xl font-bold text-white">Calculadora do Custo da Ineficiência</h2>
-            </div>
-
-            <div className="space-y-6">
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-4">
-                  Taxa de Não-Retorno de Clientes Insatisfeitos: <span className="text-blue-400 font-bold">{sliderValue}%</span>
-                </label>
-                <input
-                  type="range"
-                  min="1"
-                  max="50"
-                  value={sliderValue}
-                  onChange={(e) => setSliderValue(parseInt(e.target.value))}
-                  className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
-                />
-              </div>
-
-              <div className="bg-slate-700/50 rounded-lg p-6 border border-slate-600">
-                <p className="text-slate-400 text-sm mb-2">Perda Anual Estimada</p>
-                <div className="text-5xl font-bold text-red-500 tracking-tight">
-                  R$ {(revenueLoss).toLocaleString('pt-BR')}
-                </div>
-                <p className="text-slate-400 text-xs mt-3">*Base: Faturamento Anual de R$ 3.500.000</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Charts Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-          {/* Heatmap */}
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl border border-slate-700 p-8 shadow-2xl">
-            <div className="flex items-center gap-3 mb-8">
-              <AlertCircle className="w-6 h-6 text-orange-400" />
-              <h2 className="text-2xl font-bold text-white">Mapa de Calor de Falhas</h2>
-            </div>
-            <p className="text-slate-400 text-sm mb-6">Clique em uma área para análise SWOT detalhada</p>
-            
-            <div className="space-y-3">
-              {heatmapData.map((item) => (
-                <button
-                  key={item.name}
-                  onClick={() => handleCategoryClick(item.name)}
-                  className="w-full group relative overflow-hidden rounded-lg transition-all duration-300 hover:scale-105"
-                >
-                  <div
-                    className="h-12 flex items-center justify-between px-4 text-white font-semibold rounded-lg cursor-pointer hover:brightness-110 transition-all"
-                    style={{ backgroundColor: item.color }}
-                  >
-                    <span>{item.name}</span>
-                    <span className="text-sm font-bold">{item.value}%</span>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* ROI Chart */}
-          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl border border-slate-700 p-8 shadow-2xl">
-            <div className="flex items-center gap-3 mb-8">
-              <TrendingDown className="w-6 h-6 text-green-400" />
-              <h2 className="text-2xl font-bold text-white">Projeção de ROI</h2>
-            </div>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={roiData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
-                <XAxis dataKey="name" stroke="#94a3b8" style={{ fontSize: '12px' }} />
-                <YAxis stroke="#94a3b8" style={{ fontSize: '12px' }} />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: '#1e293b',
-                    border: '1px solid #475569',
-                    borderRadius: '8px',
-                    color: '#fff'
-                  }}
-                  formatter={(value) => `R$ ${(value as number).toLocaleString('pt-BR')}`}
-                />
-                <Bar dataKey="value" fill="#3b82f6" radius={[8, 8, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-
-        {/* Pie Chart */}
-        <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl border border-slate-700 p-8 shadow-2xl">
-          <div className="flex items-center gap-3 mb-8">
-            <Zap className="w-6 h-6 text-yellow-400" />
-            <h2 className="text-2xl font-bold text-white">Distribuição de Problemas</h2>
-          </div>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={heatmapData}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={({ name, value }) => `${name}: ${value}%`}
-                outerRadius={100}
-                fill="#8884d8"
-                dataKey="value"
-              >
-                {heatmapData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
-                ))}
-              </Pie>
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: '#1e293b',
-                  border: '1px solid #475569',
-                  borderRadius: '8px',
-                  color: '#fff'
-                }}
-                formatter={(value) => `${value}%`}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-      </main>
-
-      {/* SWOT Modal */}
-      <Dialog open={swotOpen} onOpenChange={setSwotOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-slate-900 border-slate-700">
-          <DialogHeader>
-            <DialogTitle className="text-2xl text-white">
-              Análise SWOT: {selectedCategory}
-            </DialogTitle>
-          </DialogHeader>
-
-          {currentSwot && (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-              {/* Strengths */}
-              <div className="bg-gradient-to-br from-green-900/30 to-green-800/20 rounded-lg p-6 border border-green-700/50">
-                <h3 className="text-lg font-bold text-green-400 mb-4 flex items-center gap-2">
-                  <span className="text-xl">💪</span> Forças
-                </h3>
-                <ul className="space-y-3">
-                  {currentSwot.strengths.map((item, idx) => (
-                    <li key={idx} className="text-sm">
-                      <p className="font-semibold text-green-300">{item.title}</p>
-                      <p className="text-slate-400 text-xs mt-1">{item.detail}</p>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Weaknesses */}
-              <div className="bg-gradient-to-br from-red-900/30 to-red-800/20 rounded-lg p-6 border border-red-700/50">
-                <h3 className="text-lg font-bold text-red-400 mb-4 flex items-center gap-2">
-                  <span className="text-xl">⚠️</span> Fraquezas
-                </h3>
-                <ul className="space-y-3">
-                  {currentSwot.weaknesses.map((item, idx) => (
-                    <li key={idx} className="text-sm">
-                      <p className="font-semibold text-red-300">{item.metric}</p>
-                      <p className="text-red-400 font-bold text-xs mt-1">{item.value}</p>
-                      <p className="text-slate-400 text-xs mt-1">{item.impact}</p>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Opportunities */}
-              <div className="bg-gradient-to-br from-blue-900/30 to-blue-800/20 rounded-lg p-6 border border-blue-700/50">
-                <h3 className="text-lg font-bold text-blue-400 mb-4 flex items-center gap-2">
-                  <span className="text-xl">🚀</span> Oportunidades
-                </h3>
-                <ul className="space-y-3">
-                  {currentSwot.opportunities.map((item, idx) => (
-                    <li key={idx} className="text-sm">
-                      <p className="font-semibold text-blue-300">{item.title}</p>
-                      <p className="text-slate-400 text-xs mt-1">{item.detail}</p>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Threats */}
-              <div className="bg-gradient-to-br from-yellow-900/30 to-yellow-800/20 rounded-lg p-6 border border-yellow-700/50">
-                <h3 className="text-lg font-bold text-yellow-400 mb-4 flex items-center gap-2">
-                  <span className="text-xl">⚡</span> Ameaças
-                </h3>
-                <ul className="space-y-3">
-                  {currentSwot.threats.map((item, idx) => (
-                    <li key={idx} className="text-sm">
-                      <p className="font-semibold text-yellow-300">{item.title}</p>
-                      <p className="text-slate-400 text-xs mt-1">{item.detail}</p>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-          )}
-
-          {/* Action Plan */}
-          {currentSwot && (
-            <div className="mt-8 bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg p-6 border border-blue-500">
-              <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                <Zap className="w-5 h-5" /> Plano de Ação Recomendado
-              </h3>
-              <ul className="space-y-2">
-                {swotData[selectedCategory as keyof typeof swotData]?.strengths && (
-                  <li className="text-sm text-blue-100">
-                    • Implementar sistema inteligente para otimizar operações e reduzir custos
-                  </li>
-                )}
-              </ul>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-    </div>
+    <Switch>
+      <Route path={"/"} component={Home} />
+      <Route path={"/404"} component={NotFound} />
+      {/* Final fallback route */}
+      <Route component={NotFound} />
+    </Switch>
   );
 }
+
+// NOTE: About Theme
+// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
+//   to keep consistent foreground/background color across components
+// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
+
+function App() {
+  return (
+    <ErrorBoundary>
+      <ThemeProvider
+        defaultTheme="dark"
+        // switchable
+      >
+        <TooltipProvider>
+          <Toaster />
+          <Router />
+        </TooltipProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
+  );
+}
+
+export default App;
