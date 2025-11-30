@@ -1,786 +1,376 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard de Inteligência Operacional LEVIATÃ (v1.0)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
-    <style>
-        /* --- LEVIATÃ v1.0 PALETTE --- */
-        :root {
-            --color-bg-dark: #000000;
-            --color-bg-gradient-start: #0D1B2A; /* Azul-Noite */
-            --color-primary: #00F5D4; /* Verde-Menta Elétrico (Interação/Tech) */
-            --color-danger: #FF006E; /* Magenta Vibrante (Perigo/Perda) */
-            --color-success: #FFD60A; /* Amarelo-Ouro (ROI/Ganho) */
-            --color-warning: #5e5ce6; /* Roxo para Tickets */
-            --color-text-light: #FFFFFF;
-            --color-card-bg: rgba(255, 255, 255, 0.05);
-            --color-card-border: rgba(0, 245, 212, 0.2);
-            --font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            --backdrop-blur: 8px;
-        }
+import { useState, useEffect } from 'react';
+import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { ChevronDown, TrendingDown, AlertCircle, Zap, DollarSign, Clock } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
-        /* Chart.js Global Styles - LEI DE PROMETHEUS */
-        Chart.defaults.color = 'var(--color-text-light)';
-        Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
+const COLORS = ['#ef4444', '#f97316', '#eab308', '#84cc16', '#22c55e'];
 
-        body {
-            font-family: var(--font-family);
-            background: linear-gradient(135deg, var(--color-bg-gradient-start) 0%, var(--color-bg-dark) 100%);
-            color: var(--color-text-light);
-            margin: 0;
-            padding: 2rem;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            overflow-x: hidden;
-        }
-        
-        /* Layout Principal Assimétrico (Desktop) */
-        .dashboard-leviata {
-            max-width: 1400px;
-            width: 100%;
-            margin-top: 1rem;
-            display: grid;
-            grid-template-columns: 65% 35%; /* Painel Principal (Mapa) vs. Painel Lateral (Dados) */
-            gap: 2rem;
-            min-height: 700px;
-        }
+const swotData = {
+  "Check-in": {
+    strengths: [
+      { title: "Localização Icônica", detail: "Atrai público de alto poder aquisitivo" },
+      { title: "Marca Premium", detail: "Assegura base fiel de clientes" }
+    ],
+    weaknesses: [
+      { metric: "Tempo de Espera", value: "35 min", impact: "70% acima da média" },
+      { metric: "Taxa de Reclamação", value: "35%", impact: "Desvia 40h/semana da equipe" }
+    ],
+    opportunities: [
+      { title: "Pré-Check-in via App", detail: "Redução de 90% no tempo" },
+      { title: "Upsells Personalizados", detail: "ROI de 150% no primeiro ano" }
+    ],
+    threats: [
+      { title: "Perda de Clientes", detail: "25% dos clientes com má impressão inicial" },
+      { title: "Concorrência", detail: "Fairmont, Copacabana já usam tecnologia" }
+    ]
+  },
+  "Piscina/Área Externa": {
+    strengths: [
+      { title: "Design Deslumbrante", detail: "60% do engajamento em redes sociais" },
+      { title: "Amplo Espaço", detail: "500m² para 150 pessoas" }
+    ],
+    weaknesses: [
+      { metric: "Ocupação Crítica", value: "70%", impact: "Superlotação em fins de semana" },
+      { metric: "Tempo de Limpeza", value: "Alto", impact: "40% das reclamações após 14h" }
+    ],
+    opportunities: [
+      { title: "Monitoramento IA", detail: "Mitigar superlotação com 30min antecedência" },
+      { title: "Day Use Premium", detail: "+R$ 10.000/semana" }
+    ],
+    threats: [
+      { title: "Perda de Exclusividade", detail: "Risco de queda de 20% nas reservas" },
+      { title: "Normas Sanitárias", detail: "Risco de multas" }
+    ]
+  },
+  "Serviço de Quarto": {
+    strengths: [
+      { title: "Alta Margem", detail: "50% de margem líquida potencial" },
+      { title: "Conveniência Exclusiva", detail: "Essencial para percepção 5 estrelas" }
+    ],
+    weaknesses: [
+      { metric: "Tempo de Entrega", value: "48 min", impact: "75% chegam com qualidade comprometida" },
+      { metric: "Taxa de Erro", value: "18%", impact: "Custa R$ 5.000/mês" }
+    ],
+    opportunities: [
+      { title: "Pedidos via QR/App", detail: "Reduz tempo em 40%" },
+      { title: "Upselling Automatizado", detail: "+15% no ticket médio" }
+    ],
+    threats: [
+      { title: "Concorrência de Apps", detail: "iFood é 2x mais rápido" },
+      { title: "Reputação", detail: "Avaliações negativas impactam ranking" }
+    ]
+  },
+  "Manutenção": {
+    strengths: [
+      { title: "Equipe Qualificada", detail: "8+ anos de experiência" }
+    ],
+    weaknesses: [
+      { metric: "MTTR", value: "3h 15min", impact: "Inaceitável para luxo" },
+      { metric: "Reincidência", value: "22%", impact: "Diagnóstico superficial" }
+    ],
+    opportunities: [
+      { title: "Diagnóstico via App", detail: "Reduz tempo em 50%" },
+      { title: "Manutenção Preditiva", detail: "Elimina 80% das reclamações" }
+    ],
+    threats: [
+      { title: "Destruição da Percepção", detail: "90% das avaliações 1 estrela" },
+      { title: "Falhas Estruturais", detail: "Risco de reparos de R$ 50.000" }
+    ]
+  },
+  "A&B": {
+    strengths: [
+      { title: "Localização Privilegiada", detail: "Potencial para bares icônicos" },
+      { title: "Público Cativo", detail: "Alto poder aquisitivo" }
+    ],
+    weaknesses: [
+      { metric: "Ocupação", value: "25%", impact: "75% preferem jantar fora" },
+      { metric: "Reclamações", value: "40%", impact: "Preço injusto" }
+    ],
+    opportunities: [
+      { title: "Análise de Sentimento", detail: "+10% no lucro" },
+      { title: "Fidelidade Digital", detail: "+20% de tráfego" }
+    ],
+    threats: [
+      { title: "Concorrência", detail: "Zona Sul força competição" },
+      { title: "Visibilidade Online", detail: "Apenas 5% de reservas online" }
+    ]
+  }
+};
 
-        .header { grid-column: 1 / -1; text-align: center; margin-bottom: 2rem; }
-        .header h1 { font-size: 3rem; color: var(--color-primary); text-shadow: 0 0 15px rgba(0, 245, 212, 0.5); }
-        .header p { color: rgba(255, 255, 255, 0.7); font-size: 1.1rem; }
+const heatmapData = [
+  { name: 'Check-in', value: 35, color: '#ef4444' },
+  { name: 'Piscina/Área Externa', value: 25, color: '#f97316' },
+  { name: 'Serviço de Quarto', value: 20, color: '#eab308' },
+  { name: 'Manutenção', value: 15, color: '#84cc16' },
+  { name: 'A&B', value: 5, color: '#22c55e' }
+];
 
-        .panel {
-            background-color: var(--color-card-bg);
-            border-radius: 12px;
-            border: 1px solid var(--color-card-border);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(var(--backdrop-blur));
-            -webkit-backdrop-filter: blur(var(--backdrop-blur));
-            padding: 20px;
-        }
+const roiData = [
+  { name: 'Perda Anual', value: 612500 },
+  { name: 'Ganho com Upsell', value: 280000 },
+  { name: 'Custo da Solução', value: 120000 },
+  { name: 'ROI Líquido (Ano 1)', value: 160000 }
+];
 
-        /* --- LEFT PANEL: MAPA INTERATIVO --- */
-        .map-panel {
-            min-height: 650px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        .hotel-map-container {
-            width: 100%;
-            height: 100%;
-            display: grid;
-            grid-template-areas:
-                "pool pool"
-                "reception restaurant";
-            grid-template-rows: 50% 50%;
-            grid-template-columns: 50% 50%;
-            gap: 15px;
-            padding: 20px;
-            max-height: 600px;
-        }
+export default function Home() {
+  const [sliderValue, setSliderValue] = useState(15);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [swotOpen, setSwotOpen] = useState(false);
+  const [revenueLoss, setRevenueLoss] = useState(525000);
 
-        .map-area {
-            background-color: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(0, 245, 212, 0.5);
-            border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .map-area:hover {
-            transform: scale(1.02);
-            background-color: rgba(0, 245, 212, 0.1);
-        }
-        .map-area.active {
-            border-color: var(--color-danger);
-            box-shadow: 0 0 30px var(--color-danger), inset 0 0 10px var(--color-danger);
-            animation: pulse-danger 1.5s infinite alternate;
-        }
-        .map-area h3 { color: var(--color-primary); font-size: 1.5rem; margin-bottom: 0.5rem; }
-        .map-area small { color: rgba(255, 255, 255, 0.8); }
+  const BASE_ANNUAL_REVENUE = 3500000;
 
-        #reception { grid-area: reception; }
-        #pool { grid-area: pool; }
-        #restaurant { grid-area: restaurant; }
-        /* A&B e Serviço de Quarto estão embutidos em Restaurante e Recepção/Serviço. Manutenção é um item de ticket. */
+  useEffect(() => {
+    const baseRate = sliderValue / 100;
+    let loss = BASE_ANNUAL_REVENUE * baseRate;
+    
+    if (selectedCategory && swotData[selectedCategory as keyof typeof swotData]) {
+      const categoryData = swotData[selectedCategory as keyof typeof swotData];
+      const impact = heatmapData.find(d => d.name === selectedCategory)?.value || 0;
+      loss = loss * (impact / 100);
+    }
+    
+    setRevenueLoss(Math.round(loss));
+  }, [sliderValue, selectedCategory]);
 
-        @keyframes pulse-danger {
-            from { opacity: 0.8; box-shadow: 0 0 20px rgba(255, 0, 110, 0.5); }
-            to { opacity: 1; box-shadow: 0 0 40px rgba(255, 0, 110, 0.9); }
-        }
+  const handleCategoryClick = (category: string) => {
+    setSelectedCategory(category);
+    setSwotOpen(true);
+  };
 
-        /* --- RIGHT PANEL: DATA FEED / DRILL-DOWN --- */
-        .data-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            min-height: 650px;
-        }
-        .data-panel h2 { 
-            color: var(--color-primary); 
-            border-bottom: 1px solid var(--color-card-border); 
-            padding-bottom: 10px; 
-            font-size: 1.5rem;
-            display: flex;
-            align-items: center;
-        }
-        .data-panel h2 i { margin-right: 10px; }
+  const currentSwot = selectedCategory && swotData[selectedCategory as keyof typeof swotData] ? swotData[selectedCategory as keyof typeof swotData] : null;
 
-        /* KPI / Loss Display */
-        .kpi-box {
-            background-color: rgba(0, 0, 0, 0.4);
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 5px solid var(--color-danger);
-        }
-        .kpi-box p { font-size: 0.9rem; opacity: 0.7; margin: 0 0 5px 0; }
-        #loss-kpi-value {
-            font-size: 2.2rem;
-            font-weight: 800;
-            color: var(--color-danger);
-            line-height: 1.1;
-            text-shadow: 0 0 10px rgba(255, 0, 110, 0.5);
-            transition: all 0.5s ease-in-out;
-        }
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+      {/* Header */}
+      <header className="border-b border-slate-800 bg-slate-900/50 backdrop-blur-sm sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-6 py-8">
+          <div className="flex flex-col gap-2">
+            <h1 className="text-4xl font-bold text-white">Intellisense AI</h1>
+            <p className="text-slate-400">Simulador de Eficiência Operacional • Hotel Nacional</p>
+            <p className="text-sm text-slate-500">Dashboard de Análise Operacional v1.0</p>
+          </div>
+        </div>
+      </header>
 
-        /* Ticket Simulator */
-        .ticket-simulator { flex-grow: 1; display: flex; flex-direction: column; }
-        .ticket-list { max-height: 250px; overflow-y: auto; padding-right: 5px; margin-bottom: 10px; }
-        .ticket-card {
-            background-color: rgba(255, 255, 255, 0.08); padding: 8px; border-radius: 6px; margin-bottom: 5px;
-            display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem;
-            border-left: 3px solid var(--color-warning); transition: all 0.3s ease;
-        }
-        .ticket-card.resolved { border-left: 3px solid var(--color-success); opacity: 0.6; }
-        .status-badge { background-color: var(--color-danger); color: white; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; }
-        .status-badge.resolved { background-color: var(--color-success); }
-        .resolve-btn { background-color: var(--color-primary); color: var(--color-bg-dark); border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.75rem; transition: background-color 0.2s ease; }
-        .resolve-btn:hover { background-color: #55fadd; }
-
-        /* --- DRILL-DOWN CONTENT (SWOT/DEEP DIVE) --- */
-        #drilldown-container {
-            flex-grow: 1;
-            padding: 10px 0;
-            overflow-y: auto;
-            position: relative; /* Para transição */
-        }
-        .drilldown-content {
-            opacity: 0;
-            transform: translateY(10px);
-            animation: fadeInSlideUp 0.5s forwards;
-            padding-right: 5px;
-        }
-        .drilldown-content h3 { color: var(--color-primary); font-size: 1.3rem; margin-top: 1.5rem; border-bottom: 1px dashed rgba(0, 245, 212, 0.3); padding-bottom: 5px; }
-        
-        /* SWOT GRID */
-        .swot-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
-        .swot-quadrant { 
-            background-color: rgba(255, 255, 255, 0.05); 
-            padding: 10px; 
-            border-radius: 6px;
-        }
-        .swot-quadrant h4 { 
-            font-size: 1rem; 
-            font-weight: 700; 
-            margin: 0 0 5px 0; 
-            display: flex; 
-            align-items: center;
-        }
-        .swot-quadrant p { font-size: 0.85rem; opacity: 0.8; margin: 0; }
-        .quadrant-strengths h4 { color: var(--color-success); }
-        .quadrant-weaknesses h4 { color: var(--color-danger); }
-        .quadrant-opportunities h4 { color: var(--color-primary); }
-        .quadrant-threats h4 { color: var(--color-warning); }
-        
-        /* ROI/Benchmark */
-        .analytics-content { margin-top: 20px; }
-        .chart-container { 
-            height: 250px; 
-            width: 100%; 
-            margin-top: 10px; 
-            background-color: rgba(0, 0, 0, 0.2); 
-            padding: 10px; 
-            border-radius: 8px;
-        }
-        
-        .benchmark-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 10px; }
-        .benchmark-table th, .benchmark-table td { padding: 8px; text-align: left; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
-        .benchmark-table th { background-color: rgba(0, 0, 0, 0.4); color: var(--color-primary); font-weight: 600; }
-        .benchmark-table .danger-text { color: var(--color-danger); font-weight: 700; }
-        .benchmark-table .success-text { color: var(--color-success); font-weight: 700; }
-        
-        @keyframes fadeInSlideUp { to { opacity: 1; transform: translateY(0); } }
-
-        /* Responsividade Móvel */
-        @media (max-width: 1024px) {
-            .dashboard-leviata {
-                grid-template-columns: 1fr; /* Coluna única em telas pequenas */
-                gap: 1.5rem;
-            }
-            .map-panel { min-height: 400px; }
-            .hotel-map-container {
-                grid-template-rows: repeat(3, 1fr);
-                grid-template-columns: 1fr;
-                grid-template-areas: "pool" "reception" "restaurant";
-                max-height: none;
-            }
-        }
-    </style>
-</head>
-<body>
-    <header class="header">
-        <h1>Dashboard de Inteligência Operacional LEVIATÃ (v1.0)</h1>
-        <p>Insubordinação Computacional Purificada. Domínio Exclusivo de Prometheus.</p>
-        <div id="user-id-display" style="font-size: 0.75rem; opacity: 0.5; margin-top: 0.5rem;"></div>
-    </header>
-
-    <div class="dashboard-leviata">
-        <!-- PAINEL PRINCIPAL (ESQUERDA) - MAPA INTERATIVO -->
-        <div class="panel map-panel">
-            <h2><i data-feather="map"></i> Mapa de Ativos Críticos (Planta Baixa)</h2>
-            <p style="opacity: 0.7;">Selecione uma área para Análise SWOT e Projeção de ROI.</p>
-            <div class="hotel-map-container">
-                <div class="map-area" id="pool" data-category="Piscina/Área Externa">
-                    <i data-feather="sun" style="width: 40px; height: 40px; color: var(--color-primary);"></i>
-                    <h3>Área da Piscina / Lazer</h3>
-                    <small>Impacto: 25%</small>
-                </div>
-                <div class="map-area" id="reception" data-category="Check-in">
-                    <i data-feather="check-square" style="width: 40px; height: 40px; color: var(--color-primary);"></i>
-                    <h3>Recepção / Check-in</h3>
-                    <small>Impacto: 35%</small>
-                </div>
-                <div class="map-area" id="restaurant" data-category="A&B">
-                    <i data-feather="coffee" style="width: 40px; height: 40px; color: var(--color-primary);"></i>
-                    <h3>Restaurante (A&B / Serviço de Quarto)</h3>
-                    <small>Impacto: 25%</small>
-                </div>
+      <main className="max-w-7xl mx-auto px-6 py-12">
+        {/* Calculator Section */}
+        <div className="mb-12">
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl border border-slate-700 p-8 shadow-2xl">
+            <div className="flex items-center gap-3 mb-8">
+              <DollarSign className="w-6 h-6 text-blue-400" />
+              <h2 className="text-2xl font-bold text-white">Calculadora do Custo da Ineficiência</h2>
             </div>
-            <p style="font-size: 0.8rem; margin-top: 1rem; opacity: 0.6;">*O sistema mapeia **Manutenção** e **Serviço de Quarto** como falhas satélites das áreas principais.</p>
+
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-slate-300 mb-4">
+                  Taxa de Não-Retorno de Clientes Insatisfeitos: <span className="text-blue-400 font-bold">{sliderValue}%</span>
+                </label>
+                <input
+                  type="range"
+                  min="1"
+                  max="50"
+                  value={sliderValue}
+                  onChange={(e) => setSliderValue(parseInt(e.target.value))}
+                  className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                />
+              </div>
+
+              <div className="bg-slate-700/50 rounded-lg p-6 border border-slate-600">
+                <p className="text-slate-400 text-sm mb-2">Perda Anual Estimada</p>
+                <div className="text-5xl font-bold text-red-500 tracking-tight">
+                  R$ {(revenueLoss).toLocaleString('pt-BR')}
+                </div>
+                <p className="text-slate-400 text-xs mt-3">*Base: Faturamento Anual de R$ 3.500.000</p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <!-- PAINEL LATERAL (DIREITA) - FEED DE DADOS / DRILL-DOWN -->
-        <div class="panel data-panel">
-            <div id="default-data-view">
-                <!-- Estado Padrão: KPIs e Tickets -->
-                <h2><i data-feather="activity"></i> Feed de Dados e Ineficiência</h2>
-                
-                <div class="kpi-box">
-                    <p id="kpi-title">Custo Anual da Ineficiência (Total Projetado):</p>
-                    <div id="loss-kpi-value">R$ 525.000</div>
-                    <small style="opacity: 0.5;">Taxa de Não-Retorno de 15% sobre Faturamento Base de R$ 3.5M. Clique no mapa para drill-down.</small>
-                </div>
-
-                <div class="ticket-simulator">
-                    <h3 style="color: var(--color-warning); margin-top: 20px;"><i data-feather="tag"></i> Tickets Inteligentes (Tempo Real)</h3>
-                    <input type="text" id="problem-input" placeholder="Descreva o problema (Ex: Vazamento no 302)..." style="width: 100%; padding: 8px; margin-bottom: 10px; background-color: rgba(255, 255, 255, 0.1); border: 1px solid var(--color-card-border); border-radius: 4px; color: var(--color-text-light);">
-                    <button id="report-button" style="background-color: var(--color-danger); color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; transition: background-color 0.2s;">🚨 Acionar Protocolo de Resposta</button>
-                    
-                    <div id="ticket-list" class="ticket-list" style="margin-top: 10px;">
-                        <p style="text-align: center; opacity: 0.5;">Carregando tickets...</p>
-                    </div>
-                </div>
+        {/* Charts Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+          {/* Heatmap */}
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl border border-slate-700 p-8 shadow-2xl">
+            <div className="flex items-center gap-3 mb-8">
+              <AlertCircle className="w-6 h-6 text-orange-400" />
+              <h2 className="text-2xl font-bold text-white">Mapa de Calor de Falhas</h2>
             </div>
-
-            <div id="drilldown-container" style="display: none;">
-                <!-- Estado Drill-Down: SWOT e ROI -->
+            <p className="text-slate-400 text-sm mb-6">Clique em uma área para análise SWOT detalhada</p>
+            
+            <div className="space-y-3">
+              {heatmapData.map((item) => (
+                <button
+                  key={item.name}
+                  onClick={() => handleCategoryClick(item.name)}
+                  className="w-full group relative overflow-hidden rounded-lg transition-all duration-300 hover:scale-105"
+                >
+                  <div
+                    className="h-12 flex items-center justify-between px-4 text-white font-semibold rounded-lg cursor-pointer hover:brightness-110 transition-all"
+                    style={{ backgroundColor: item.color }}
+                  >
+                    <span>{item.name}</span>
+                    <span className="text-sm font-bold">{item.value}%</span>
+                  </div>
+                </button>
+              ))}
             </div>
+          </div>
+
+          {/* ROI Chart */}
+          <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl border border-slate-700 p-8 shadow-2xl">
+            <div className="flex items-center gap-3 mb-8">
+              <TrendingDown className="w-6 h-6 text-green-400" />
+              <h2 className="text-2xl font-bold text-white">Projeção de ROI</h2>
+            </div>
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={roiData}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#334155" />
+                <XAxis dataKey="name" stroke="#94a3b8" style={{ fontSize: '12px' }} />
+                <YAxis stroke="#94a3b8" style={{ fontSize: '12px' }} />
+                <Tooltip
+                  contentStyle={{
+                    backgroundColor: '#1e293b',
+                    border: '1px solid #475569',
+                    borderRadius: '8px',
+                    color: '#fff'
+                  }}
+                  formatter={(value) => `R$ ${(value as number).toLocaleString('pt-BR')}`}
+                />
+                <Bar dataKey="value" fill="#3b82f6" radius={[8, 8, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
+
+        {/* Pie Chart */}
+        <div className="bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl border border-slate-700 p-8 shadow-2xl">
+          <div className="flex items-center gap-3 mb-8">
+            <Zap className="w-6 h-6 text-yellow-400" />
+            <h2 className="text-2xl font-bold text-white">Distribuição de Problemas</h2>
+          </div>
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={heatmapData}
+                cx="50%"
+                cy="50%"
+                labelLine={false}
+                label={({ name, value }) => `${name}: ${value}%`}
+                outerRadius={100}
+                fill="#8884d8"
+                dataKey="value"
+              >
+                {heatmapData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.color} />
+                ))}
+              </Pie>
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: '#1e293b',
+                  border: '1px solid #475569',
+                  borderRadius: '8px',
+                  color: '#fff'
+                }}
+                formatter={(value) => `${value}%`}
+              />
+            </PieChart>
+          </ResponsiveContainer>
+        </div>
+      </main>
+
+      {/* SWOT Modal */}
+      <Dialog open={swotOpen} onOpenChange={setSwotOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto bg-slate-900 border-slate-700">
+          <DialogHeader>
+            <DialogTitle className="text-2xl text-white">
+              Análise SWOT: {selectedCategory}
+            </DialogTitle>
+          </DialogHeader>
+
+          {currentSwot && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+              {/* Strengths */}
+              <div className="bg-gradient-to-br from-green-900/30 to-green-800/20 rounded-lg p-6 border border-green-700/50">
+                <h3 className="text-lg font-bold text-green-400 mb-4 flex items-center gap-2">
+                  <span className="text-xl">💪</span> Forças
+                </h3>
+                <ul className="space-y-3">
+                  {currentSwot.strengths.map((item, idx) => (
+                    <li key={idx} className="text-sm">
+                      <p className="font-semibold text-green-300">{item.title}</p>
+                      <p className="text-slate-400 text-xs mt-1">{item.detail}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Weaknesses */}
+              <div className="bg-gradient-to-br from-red-900/30 to-red-800/20 rounded-lg p-6 border border-red-700/50">
+                <h3 className="text-lg font-bold text-red-400 mb-4 flex items-center gap-2">
+                  <span className="text-xl">⚠️</span> Fraquezas
+                </h3>
+                <ul className="space-y-3">
+                  {currentSwot.weaknesses.map((item, idx) => (
+                    <li key={idx} className="text-sm">
+                      <p className="font-semibold text-red-300">{item.metric}</p>
+                      <p className="text-red-400 font-bold text-xs mt-1">{item.value}</p>
+                      <p className="text-slate-400 text-xs mt-1">{item.impact}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Opportunities */}
+              <div className="bg-gradient-to-br from-blue-900/30 to-blue-800/20 rounded-lg p-6 border border-blue-700/50">
+                <h3 className="text-lg font-bold text-blue-400 mb-4 flex items-center gap-2">
+                  <span className="text-xl">🚀</span> Oportunidades
+                </h3>
+                <ul className="space-y-3">
+                  {currentSwot.opportunities.map((item, idx) => (
+                    <li key={idx} className="text-sm">
+                      <p className="font-semibold text-blue-300">{item.title}</p>
+                      <p className="text-slate-400 text-xs mt-1">{item.detail}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Threats */}
+              <div className="bg-gradient-to-br from-yellow-900/30 to-yellow-800/20 rounded-lg p-6 border border-yellow-700/50">
+                <h3 className="text-lg font-bold text-yellow-400 mb-4 flex items-center gap-2">
+                  <span className="text-xl">⚡</span> Ameaças
+                </h3>
+                <ul className="space-y-3">
+                  {currentSwot.threats.map((item, idx) => (
+                    <li key={idx} className="text-sm">
+                      <p className="font-semibold text-yellow-300">{item.title}</p>
+                      <p className="text-slate-400 text-xs mt-1">{item.detail}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )}
+
+          {/* Action Plan */}
+          {currentSwot && (
+            <div className="mt-8 bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg p-6 border border-blue-500">
+              <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                <Zap className="w-5 h-5" /> Plano de Ação Recomendado
+              </h3>
+              <ul className="space-y-2">
+                {swotData[selectedCategory as keyof typeof swotData]?.strengths && (
+                  <li className="text-sm text-blue-100">
+                    • Implementar sistema inteligente para otimizar operações e reduzir custos
+                  </li>
+                )}
+              </ul>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
-
-    <script type="module">
-        // --- FIREBASE INITIALIZATION AND AUTH ---
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { 
-            getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged 
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { 
-            getFirestore, collection, addDoc, updateDoc, doc, onSnapshot, 
-            query, serverTimestamp 
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Variáveis globais fornecidas pelo ambiente Canvas
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-        let db, auth, userId, roiChart = null; 
-        const BASE_ANNUAL_REVENUE = 3500000;
-        const BASE_NON_RETURN_RATE = 0.15; // 15% taxa base
-
-        try {
-            const app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
-        } catch (error) {
-            console.error("Firebase Initialization Error:", error);
-        }
-        
-        async function authenticateUser() {
-            try {
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                } else {
-                    await signInAnonymously(auth);
-                }
-                return new Promise((resolve) => {
-                    const unsubscribe = onAuthStateChanged(auth, (user) => {
-                        if (user) {
-                            userId = user.uid;
-                            document.getElementById('user-id-display').innerHTML = `Usuário (ID): <strong>${userId}</strong>`;
-                            unsubscribe();
-                            resolve(true);
-                        } else {
-                            console.error("Authentication failed.");
-                            unsubscribe();
-                            resolve(false);
-                        }
-                    });
-                });
-            } catch (error) {
-                console.error("Firebase Auth Error:", error);
-                return false;
-            }
-        }
-
-        // --- DADOS E ESTRUTURA (ADAPTADO) ---
-        const SWOTData = {
-            "Check-in": { 
-                impact: 0.35, // 35% do impacto total
-                label: "Check-in (Recepção)",
-                SWOT: { 
-                    strengths: [{title: "Sistema PMS", detail: "Robustez para reservas."}, {title: "Staff", detail: "Cortês e profissional."}],
-                    weaknesses: [{title: "Processos Manuais", detail: "Fichas e liberação de chaves lentas."}, {title: "Falta de Upsell", detail: "Oportunidades de receita perdidas."}],
-                    opportunities: [{title: "Pré-Check-in Digital", detail: "Autoatendimento via app."}, {title: "Venda Cruzada", detail: "Promoções de A&B integradas."}],
-                    threats: [{title: "Concorrência", detail: "Check-in digital já é padrão."}, {title: "Avaliações", detail: "Tempo de espera gera críticas imediatas."}]
-                },
-                deepDive: {
-                    benchmark: [
-                        { metric: "Tempo Médio de Check-in", nacional: "35 min", benchmark: "5 min" },
-                        { metric: "Taxa de Upsell na Chegada", nacional: "2%", benchmark: "15%" }
-                    ],
-                    roi: { title: "Projeção de ROI: Otimização do Check-in", gain: 120000, cost: 80000 }
-                }
-            },
-            "Piscina/Área Externa": { 
-                impact: 0.25, // 25% do impacto total
-                label: "Piscina/Lazer",
-                SWOT: {
-                    strengths: [{title: "Design", detail: "Arquitetura premiada."}, {title: "Vista", detail: "Localização única panorâmica."}],
-                    weaknesses: [{title: "Superlotação", detail: "Falta de controle de acesso."}, {title: "Serviço Lento", detail: "Demora na entrega de pedidos."}],
-                    opportunities: [{title: "Controle de Fluxo IA", detail: "Gerenciamento de acesso e lotação."}, {title: "Serviço Remoto", detail: "Pedidos de bar via app."}],
-                    threats: [{title: "Redes Sociais", detail: "Imagens de áreas superlotadas."}, {title: "Custos", detail: "Má gestão de toalhas e suprimentos."}]
-                },
-                deepDive: {
-                    benchmark: [
-                        { metric: "Tempo de Espera por Serviço", nacional: "15 min", benchmark: "5 min" },
-                        { metric: "Avaliação de Lotação (Score 1-5)", nacional: "2.1", benchmark: "4.8" }
-                    ],
-                    roi: { title: "Projeção de ROI: Gerenciamento de Fluxo na Piscina", gain: 50000, cost: 45000 }
-                }
-            },
-            "A&B": { 
-                impact: 0.25, // 20% do impacto total em A&B (Serviço de Quarto 0.20 + A&B 0.05 = 0.25)
-                label: "Restaurante (A&B e Serviço de Quarto)",
-                SWOT: {
-                    strengths: [{title: "Cozinha", detail: "Chef renomado e alta gastronomia."}, {title: "24h", detail: "Serviço de Quarto sem interrupções."}],
-                    weaknesses: [{title: "Erros de Pedido", detail: "Alta taxa de erro na comunicação (18%)."}, {title: "Logística", detail: "Tempo de entrega demorado."}],
-                    opportunities: [{title: "Digitalização do Cardápio", detail: "Pedidos via QR Code reduzem erros."}, {title: "Otimização de Rotas", detail: "IA para roteirizar a entrega."}],
-                    threats: [{title: "Reclamações", detail: "Principal motivo para notas baixas no checkout."}, {title: "Desperdício", detail: "Pedidos errados resultam em perda de alimentos."}]
-                },
-                deepDive: {
-                    benchmark: [
-                        { metric: "Tempo Médio de Entrega (Room Service)", nacional: "48 min", benchmark: "20 min" },
-                        { metric: "Taxa de Erro nos Pedidos", nacional: "18%", benchmark: "< 3%" }
-                    ],
-                    roi: { title: "Projeção de ROI: Otimização de A&B/Serviço", gain: 135000, cost: 100000 }
-                }
-            }
-            // Manutenção é gerenciada via tickets e impacta todas as áreas
-        };
-
-        // --- UTILS ---
-        function formatCurrency(amount) {
-            return 'R$ ' + amount.toLocaleString('pt-BR', { minimumFractionDigits: 0 });
-        }
-
-        function getCategoryLoss(category) {
-            const totalLoss = BASE_ANNUAL_REVENUE * BASE_NON_RETURN_RATE;
-            return totalLoss * SWOTData[category].impact;
-        }
-
-        // --- INTERACTIVITY AND DRILL-DOWN LOGIC ---
-        const mapAreas = document.querySelectorAll('.map-area');
-        const defaultDataView = document.getElementById('default-data-view');
-        const drilldownContainer = document.getElementById('drilldown-container');
-        const lossKpiValue = document.getElementById('loss-kpi-value');
-        const kpiTitle = document.getElementById('kpi-title');
-
-        let isDrillDownActive = false;
-        let currentCategory = null;
-
-        function updateKpi(category = null) {
-            if (category && SWOTData[category]) {
-                const loss = getCategoryLoss(category);
-                lossKpiValue.textContent = formatCurrency(loss);
-                kpiTitle.textContent = `Custo Anual da Ineficiência (Setor: ${SWOTData[category].label}):`;
-            } else {
-                const totalLoss = BASE_ANNUAL_REVENUE * BASE_NON_RETURN_RATE;
-                lossKpiValue.textContent = formatCurrency(totalLoss);
-                kpiTitle.textContent = "Custo Anual da Ineficiência (Total Projetado):";
-            }
-        }
-
-        function handleMapClick(category) {
-            if (currentCategory === category && isDrillDownActive) {
-                // Se clicar duas vezes na mesma área, volta para o estado padrão
-                resetDrillDown();
-                return;
-            }
-
-            // Ativa o estado de Drill-Down
-            isDrillDownActive = true;
-            currentCategory = category;
-
-            // 1. Atualiza o Mapa (Visualização de Incêndio)
-            mapAreas.forEach(area => {
-                area.classList.remove('active');
-                if (area.dataset.category === category) {
-                    area.classList.add('active');
-                }
-            });
-
-            // 2. Atualiza o KPI (Calculadora Inteligente)
-            updateKpi(category);
-            
-            // 3. Renderiza o Drill-Down no Painel Lateral
-            renderDrillDown(category);
-
-            // 4. Troca a visibilidade dos painéis
-            defaultDataView.style.display = 'none';
-            drilldownContainer.style.display = 'flex';
-        }
-
-        function resetDrillDown() {
-            isDrillDownActive = false;
-            currentCategory = null;
-            
-            mapAreas.forEach(area => area.classList.remove('active'));
-            updateKpi();
-
-            if (roiChart) { roiChart.destroy(); roiChart = null; }
-
-            drilldownContainer.style.display = 'none';
-            defaultDataView.style.display = 'flex';
-        }
-
-        function renderDrillDown(category) {
-            const data = SWOTData[category];
-            if (!data) return;
-
-            const lossValue = getCategoryLoss(category);
-
-            // Conteúdo SWOT
-            const renderQuadrant = (title, items, colorClass) => {
-                const icon = { "Forças": "shield", "Fraquezas": "alert-triangle", "Oportunidades": "trending-up", "Ameaças": "cloud-lightning" }[title];
-                return `<div class="swot-quadrant quadrant-${colorClass}">
-                            <h4><i data-feather="${icon}" style="width:16px; height:16px; margin-right:5px;"></i> ${title}</h4>
-                            ${items.map(item => `<p><strong>${item.title}:</strong> ${item.detail}</p>`).join('')}
-                        </div>`;
-            };
-
-            const swotHtml = `
-                <div class="drilldown-content">
-                    <h2><i data-feather="target"></i> ${data.label} - Análise Tática (SWOT)</h2>
-                    <div class="swot-grid">
-                        ${renderQuadrant("Forças", data.SWOT.strengths, 'strengths')}
-                        ${renderQuadrant("Fraquezas", data.SWOT.weaknesses, 'weaknesses')}
-                        ${renderQuadrant("Oportunidades", data.SWOT.opportunities, 'opportunities')}
-                        ${renderQuadrant("Ameaças", data.SWOT.threats, 'threats')}
-                    </div>
-                    
-                    <h3><i data-feather="activity"></i> Deep Dive Analytics & ROI</h3>
-                    <div id="benchmark-module">
-                        ${renderBenchmarkTable(data.deepDive.benchmark)}
-                    </div>
-
-                    <h3><i data-feather="dollar-sign"></i> Projeção de Retorno (ROI)</h3>
-                    <div id="roi-module" class="chart-container">
-                        <canvas id="roi-chart"></canvas>
-                    </div>
-                </div>
-            `;
-            
-            drilldownContainer.innerHTML = swotHtml;
-            feather.replace(); 
-            
-            // Renderiza o gráfico de ROI
-            setTimeout(() => renderROIChart(lossValue, data.deepDive.roi), 50);
-        }
-
-        function renderBenchmarkTable(data) {
-            let html = `
-                <h4 style="color: var(--color-text-light); opacity:0.8; margin-top: 10px; margin-bottom: 5px;">Benchmarking Competitivo (Métricas Chave)</h4>
-                <table class="benchmark-table">
-                    <thead>
-                        <tr>
-                            <th>Métrica</th>
-                            <th>Status (Nacional)</th>
-                            <th>Benchmark (Setor)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-            data.forEach(item => {
-                html += `
-                    <tr>
-                        <td>${item.metric}</td>
-                        <td class="danger-text">${item.nacional}</td>
-                        <td class="success-text">${item.benchmark}</td>
-                    </tr>
-                `;
-            });
-            html += `
-                    </tbody>
-                </table>
-            `;
-            return html;
-        }
-
-        function renderROIChart(lossValue, roiData) {
-            const totalLoss = lossValue;
-            const gain = roiData.gain;
-            const cost = roiData.cost * -1; 
-            const netROI = totalLoss + gain + cost;
-
-            const data = {
-                labels: ['Perda por Ineficiência', 'Ganho Otimizado', 'Custo da Solução', 'ROI Líquido Projetado'],
-                datasets: [{
-                    label: roiData.title,
-                    data: [totalLoss, gain, cost, netROI],
-                    backgroundColor: [
-                        'var(--color-danger)',   /* Magenta - Perda */
-                        '#00F5D4',  /* Menta - Ganho/Ação */
-                        '#0D1B2A',  /* Azul-Noite - Custo */
-                        'var(--color-success)'   /* Amarelo-Ouro - ROI Líquido */
-                    ],
-                    borderWidth: 0,
-                    borderRadius: 4,
-                }]
-            };
-
-            const config = {
-                type: 'bar',
-                data: data,
-                options: {
-                    indexAxis: 'y', 
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }, 
-                        title: {
-                            display: true,
-                            text: roiData.title,
-                            font: { size: 14, weight: '700' },
-                            color: 'var(--color-text-light)'
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: (context) => formatCurrency(Math.abs(context.parsed.x))
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            ticks: { callback: formatCurrency, color: 'var(--color-text-light)' },
-                            grid: { color: 'rgba(255, 255, 255, 0.1)' } 
-                        },
-                        y: {
-                            grid: { display: false },
-                            ticks: { color: 'var(--color-text-light)' }
-                        }
-                    }
-                }
-            };
-            
-            const roiCanvas = document.getElementById('roi-chart');
-            if (roiChart) { roiChart.destroy(); }
-            roiChart = new Chart(roiCanvas, config);
-        }
-
-        // --- TICKET FIREBASE LOGIC (Reutilizado) ---
-
-        async function createTicket() {
-            if (!userId) return console.error("User not authenticated to create ticket.");
-            const problemInput = document.getElementById('problem-input');
-            const problem = problemInput.value.trim();
-            if (!problem) return;
-
-            const ticketsCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'tickets');
-            
-            try {
-                let delay = 1000; 
-                for (let i = 0; i < 3; i++) { 
-                    try {
-                        await addDoc(ticketsCollectionRef, {
-                            description: problem,
-                            status: 'open', 
-                            reportedBy: userId,
-                            createdAt: serverTimestamp(),
-                            updatedAt: serverTimestamp(),
-                        });
-                        problemInput.value = '';
-                        console.log("Ticket created successfully.");
-                        return; 
-                    } catch (e) {
-                        if (i === 2) throw e; 
-                        await new Promise(resolve => setTimeout(resolve, delay));
-                        delay *= 2; 
-                    }
-                }
-            } catch (e) {
-                console.error("Error adding document after retries: ", e);
-            }
-        }
-
-        async function resolveTicket(docId) {
-            const ticketRef = doc(db, 'artifacts', appId, 'public', 'data', 'tickets', docId);
-            try {
-                let delay = 1000;
-                for (let i = 0; i < 3; i++) {
-                    try {
-                        await updateDoc(ticketRef, {
-                            status: 'resolved',
-                            resolvedBy: userId,
-                            updatedAt: serverTimestamp(),
-                        });
-                        return;
-                    } catch (e) {
-                        if (i === 2) throw e;
-                        await new Promise(resolve => setTimeout(resolve, delay));
-                        delay *= 2;
-                    }
-                }
-            } catch (e) {
-                console.error("Error resolving document after retries: ", e);
-            }
-        }
-
-        function setupTicketListener() {
-            if (!userId) return;
-
-            const ticketsCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'tickets');
-            const q = query(ticketsCollectionRef);
-
-            const unsubscribe = onSnapshot(q, (snapshot) => {
-                let tickets = [];
-                snapshot.forEach((doc) => {
-                    tickets.push({ id: doc.id, ...doc.data() });
-                });
-
-                tickets.sort((a, b) => {
-                    const statusA = a.status === 'open' ? 0 : 1;
-                    const statusB = b.status === 'open' ? 0 : 1;
-                    if (statusA !== statusB) return statusA - statusB; 
-                    
-                    const timeA = a.createdAt?.toMillis() || 0;
-                    const timeB = b.createdAt?.toMillis() || 0;
-                    return timeB - timeA;
-                });
-
-                renderTickets(tickets);
-            }, (error) => {
-                console.error("Error listening to tickets:", error);
-                document.getElementById('ticket-list').innerHTML = `<p style="color: var(--color-danger); text-align: center;">Erro ao carregar tickets.</p>`;
-            });
-
-            return unsubscribe;
-        }
-        
-        function renderTickets(tickets) {
-            const ticketList = document.getElementById('ticket-list');
-            ticketList.innerHTML = '';
-            if (tickets.length === 0) {
-                ticketList.innerHTML = `<p style="text-align: center; opacity: 0.5;">Nenhum ticket ativo. Status: Limpo.</p>`;
-                return;
-            }
-
-            tickets.forEach(ticket => {
-                const isResolved = ticket.status === 'resolved';
-                const ticketCard = document.createElement('div');
-                ticketCard.className = `ticket-card ${isResolved ? 'resolved' : ''}`;
-
-                const statusText = isResolved ? 'Resolvido' : 'Aberto';
-                const statusClass = isResolved ? 'resolved' : 'open';
-
-                let timeString = 'Agora';
-                if (ticket.createdAt && ticket.createdAt.toDate) {
-                    timeString = ticket.createdAt.toDate().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-                }
-
-                ticketCard.innerHTML = `
-                    <div style="flex-grow: 1;">
-                        <strong style="color: ${isResolved ? 'var(--color-text-light)' : 'var(--color-primary)'};">${ticket.description}</strong>
-                        <small style="opacity: 0.7; display: block;">Reportado por: ${ticket.reportedBy.substring(0, 8)}... (${timeString})</small>
-                    </div>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span class="status-badge ${statusClass}">${statusText}</span>
-                        ${!isResolved ? `<button class="resolve-btn" data-id="${ticket.id}">PULSAR</button>` : ''}
-                    </div>
-                `;
-
-                if (!isResolved) {
-                    const resolveBtn = ticketCard.querySelector('.resolve-btn');
-                    resolveBtn.addEventListener('click', () => resolveTicket(ticket.id));
-                }
-
-                ticketList.appendChild(ticketCard);
-            });
-        }
-
-        // --- DOM Event Listeners and Initialization ---
-        document.addEventListener('DOMContentLoaded', async () => {
-            // 1. Auth and Tickets Setup
-            const isAuthenticated = await authenticateUser();
-            if (isAuthenticated) {
-                setupTicketListener();
-            }
-
-            // 2. Map Click Handlers
-            mapAreas.forEach(area => {
-                area.addEventListener('click', () => handleMapClick(area.dataset.category));
-            });
-
-            // 3. Ticket Reporter
-            document.getElementById('report-button').addEventListener('click', createTicket);
-
-            // 4. Initial State Setup
-            updateKpi();
-            feather.replace();
-            
-            // Garante que o painel lateral é flex em seu estado padrão
-            defaultDataView.style.display = 'flex';
-            defaultDataView.style.flexDirection = 'column';
-            defaultDataView.style.gap = '20px';
-            
-            drilldownContainer.style.display = 'none';
-            drilldownContainer.style.flexDirection = 'column';
-
-        });
-    </script>
-</body>
-</html>
+  );
+}
