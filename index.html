@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Intellisense AI - Ativo de Guerra: Simulador Operacional Nacional (v5.1 - O ALICERCE)</title>
+    <title>Intellisense AI - Ativo de Guerra: Simulador Operacional Nacional (v5.2 - A FUNDAÇÃO)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
-    <!-- Adicionado Chart.js para futuras implementações -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
 
     <style>
-        /* Base CSS da v5.0 - Estabilidade e Responsividade */
+        /* CSS da v5.1 - Estabilidade e Responsividade - SEM ALTERAÇÕES */
         :root {
             --color-primary: #0a84ff; --color-danger: #ff453a; --color-success: #34c759; --color-warning: #ff9f0a;
             --color-bg-dark: #121212; --color-bg-gradient-start: #1c1c1e; --color-bg-gradient-end: #121212;
@@ -33,8 +32,11 @@
             background-color: var(--color-card-bg); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--color-card-border);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); backdrop-filter: blur(var(--backdrop-blur)); -webkit-backdrop-filter: blur(var(--backdrop-blur));
         }
-        h1 { font-size: 2rem; color: white; letter-spacing: 0.05em; }
+        h1 { font-size: 2rem; color: white; letter-spacing: 0.05em; text-align: center; }
         h2 { color: var(--color-primary); border-bottom: 1px solid var(--color-card-border); padding-bottom: 0.75rem; margin-bottom: 1rem; font-size: 1.3rem; display: flex; align-items: center;}
+        h2 i { margin-right: 10px; }
+        .header p { text-align: center; }
+        .cost-calculator { text-align: center; }
         #revenue-lost {
             font-size: 3rem; color: var(--color-danger); font-weight: 700; margin: 0.5rem 0;
             animation: pulse 1.5s infinite alternate; text-shadow: 0 0 15px var(--color-danger); 
@@ -42,7 +44,7 @@
         input[type="range"] { width: 100%; margin: 1rem 0; }
         .bar { height: 40px; background-color: var(--color-primary); color: white; text-align: left; padding-left: 15px; line-height: 40px; border-radius: 6px; font-weight: 500; transition: all 0.3s ease; display: flex; justify-content: space-between; padding-right: 15px; cursor: pointer; }
         .bar:hover { transform: scale(1.01); }
-        .bar.active-drilldown { border: 2px solid var(--color-success); }
+        .bar.active-drilldown { border: 2px solid var(--color-success); box-shadow: 0 0 10px var(--color-success); }
         .bar.faded { opacity: 0.3; }
         #heatmap-container { display: flex; flex-direction: column; gap: 8px; }
         .swot-modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.9); display: none; align-items: center; justify-content: center; z-index: 1000; opacity: 0; transition: opacity 0.3s ease; }
@@ -53,7 +55,13 @@
         .close-button { background: none; border: none; color: white; cursor: pointer; font-size: 1.5rem; opacity: 0.7; transition: opacity 0.2s ease; }
         .close-button:hover { opacity: 1; }
         .swot-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        .swot-quadrant h3 { font-size: 1.3rem; }
+        .swot-quadrant { background-color: var(--swot-quadrant-bg); padding: 20px; border-radius: 10px; }
+        .swot-quadrant h3 { font-size: 1.3rem; color: white; display: flex; align-items: center; }
+        .swot-quadrant h3 i { margin-right: 10px; }
+        .quadrant-strengths h3 { color: var(--color-success); }
+        .quadrant-weaknesses h3 { color: var(--color-danger); }
+        .quadrant-opportunities h3 { color: var(--color-primary); }
+        .quadrant-threats h3 { color: var(--color-warning); }
         .swot-quadrant li { list-style: none; margin-bottom: 15px; padding-left: 0; }
         .swot-quadrant li strong { display: block; font-size: 1rem; color: white; margin-bottom: 3px; }
         .swot-quadrant li p { font-size: 0.9rem; margin: 0; opacity: 0.7; padding-left: 5px; }
@@ -80,8 +88,7 @@
         }
         @keyframes fadeInSlideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes pulse { from { transform: scale(1); text-shadow: 0 0 20px rgba(255, 69, 58, 0.4); } to { transform: scale(1.03); text-shadow: 0 0 35px rgba(255, 69, 58, 0.8); } }
-        /* Estilos de ticket mantidos da v4.0 */
-        .guest-view input[type="text"], .guest-view button { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 4px; border: none; }
+        .guest-view input[type="text"], .guest-view button { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 4px; border: none; box-sizing: border-box; }
         .guest-view input[type="text"] { background-color: #495057; color: var(--color-text-light); }
         .guest-view button { background-color: var(--color-primary); color: white; cursor: pointer; font-weight: bold; }
         #ticket-list { max-height: 400px; overflow-y: auto; }
@@ -97,7 +104,7 @@
     <div class="dashboard">
         <header class="header">
             <h1>Intellisense AI - Ativo de Guerra: Simulador Operacional Nacional</h1>
-            <p>Dashboard de Eficiência - A Forja da Persuasão Digital (v5.1 - O ALICERCE)</p>
+            <p>Dashboard de Eficiência - A Forja da Persuasão Digital (v5.2 - A FUNDAÇÃO)</p>
         </header>
         <div class="card cost-calculator" id="cost-calculator-card">
             <h2><i data-feather="dollar-sign"></i> Calculadora do Custo da Ineficiência</h2>
@@ -146,64 +153,66 @@
     </div>
 
     <script>
-        // --- PROMETHEUS v5.1 PATCH ---
-        // A única mudança: garantir que todos os gráficos futuros sejam legíveis.
-        Chart.defaults.color = 'var(--color-text-light)';
-        Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
-        // --- FIM DO PATCH ---
+        // =========================================================
+        // PROMETHEUS v5.2 PATCH - A CORREÇÃO DEFINITIVA
+        // =========================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- CONFIGURAÇÃO GLOBAL ---
+            Chart.defaults.color = 'var(--color-text-light)';
+            Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
+            feather.replace();
 
-        feather.replace();
+            // --- VARIÁVEIS E DADOS ---
+            let ticketIdCounter = 1;
+            const BASE_ANNUAL_REVENUE = 3500000;
+            let activeCategory = null; 
+            const SWOTData = {
+                "Check-in": { severity: 85, impact: 0.35, ActionPlan: [ "Implementação do Módulo de Pré-Check-in Digital, reduzindo o tempo de espera em 90%.", "Treinamento de 'Concierges de Boas-Vindas' para elevar o NPS inicial em +10 pontos.", "Integração do Módulo de Upsell na etapa de pré-check-in, visando aumentar a receita por hóspede em 10%." ], SWOT: { strengths: [ { title: "Localização Icônica e Premium", detail: "Atrai um público de alto poder aquisitivo. Métrica: 95% de aprovação na 'Localização'." }, { title: "Marca com Forte Apelo Histórico", detail: "Assegura uma base fiel de clientes. Métrica: 80% de ocupação recorrente." }, ], weaknesses: [ { metric: "Tempo Médio de Espera", value: "35 min", impact: "70% maior que a média de luxo, quebrando a percepção de exclusividade." }, { metric: "Taxa de Reclamação no 1º Contato", value: "35%", impact: "Exige 40 horas/semana da equipe, desviando o foco de tarefas de valor." }, { metric: "Falhas de Sistema", value: "12%", impact: "Lentidão no PMS prolonga a espera em até 10 minutos por cliente." } ], opportunities: [ { title: "Implementar Pré-Check-in via App", detail: "Redução de 90% no tempo de espera, aumento de 15% na 'Satisfação na Chegada'." }, { title: "Upsells Personalizados na Chegada", detail: "ROI projetado de 150% no primeiro ano com taxa de conversão de 8%." }, ], threats: [ { title: "Perda de Clientes de Primeira Viagem", detail: "Perda de 25% dos clientes com má impressão inicial, representando R$ 875.000,00 anuais." }, { title: "Posicionamento da Concorrência", detail: "Concorrentes (Fairmont, Copacabana Palace) já usam tecnologia, criando desnível no mercado." }, ] } },
+                "Piscina/Área Externa": { severity: 70, impact: 0.25, ActionPlan: [ "Implementação do Módulo de Ocupação em Tempo Real para controle de acesso.", "Otimização da equipe de limpeza e serviço por demanda (Argos-Tasking).", "Criação de áreas VVIP, gerando nova receita de 5% A/A." ], SWOT: { strengths: [ { title: "Design e Vista Deslumbrante", detail: "Principal atrativo visual, gerando 60% do engajamento em mídias sociais." }, { title: "Amplo Espaço de Lazer", detail: "Área de 500m² para 150 pessoas, ideal para eventos exclusivos." } ], weaknesses: [ { metric: "Taxa de Ocupação Crítica", value: "70%", impact: "Atingida em 70% dos fins de semana, gerando percepção de superlotação." }, { metric: "Tempo de Limpeza/Reposição", value: "Alto", impact: "Gera 40% das reclamações na área externa após as 14h." } ], opportunities: [ { title: "Monitoramento de Ocupação (IA)", detail: "Permite mitigar a superlotação com 30 minutos de antecedência." }, { title: "Revenue Management em Lazer", detail: "Vender 'Day Use Premium' em baixa ocupação, com potencial de +R$ 10.000/semana." } ], threats: [ { title: "Perda de Exclusividade", detail: "Comentários sobre 'piscina lotada' desvalorizam a marca, com risco de queda de 20% nas reservas." }, { title: "Normas Sanitárias", detail: "Risco de multas por falha na gestão manual de recursos." } ] } },
+                "Serviço de Quarto": { severity: 55, impact: 0.20, ActionPlan: [ "Pedidos via QR Code/App para reduzir erros em 18%.", "Sistema de 'Dispatch Inteligente' para roteirizar pedidos.", "Upselling automatizado para +15% no valor médio do ticket." ], SWOT: { strengths: [ { title: "Potencial de Alta Margem", detail: "Margem líquida de 50% se a eficiência for otimizada." }, { title: "Conveniência Exclusiva", detail: "Ponto de contato essencial para a percepção de serviço 5 estrelas." } ], weaknesses: [ { metric: "Tempo Médio de Entrega", value: "48 min", impact: "75% dos pedidos chegam com qualidade comprometida. Padrão de luxo: 20 min." }, { metric: "Taxa de Erro no Pedido", value: "18%", impact: "Custa R$ 5.000/mês em refação e vouchers." }, { metric: "Dificuldade de Contato", value: "15%", impact: "Linha ocupada em 15% das tentativas, causando perda de receita." } ], opportunities: [ { title: "Pedidos via QR Code/App", detail: "Reduz o tempo de entrega em 40% e a taxa de erro em 80%." }, { title: "Upselling Automatizado (Argos)", detail: "Aumenta o ticket médio em 15% com sugestões personalizadas." } ], threats: [ { title: "Concorrência de Apps de Delivery", detail: "Apps como iFood são 2x mais rápidos, causando perda de 30% de potencial receita." }, { title: "Reputação por Serviço Lento", detail: "Avaliações negativas impactam o ranking em plataformas de viagens." } ] } },
+                "Manutenção": { severity: 40, impact: 0.15, ActionPlan: [ "Sistema de 'Tickets Inteligentes' com foto para diagnóstico imediato.", "Dashboard de KPIs de tempo de resposta e resolução.", "Redução do MTTR em 75% no primeiro trimestre." ], SWOT: { strengths: [ { title: "Equipe Interna Qualificada", detail: "8+ anos de experiência na estrutura do prédio." } ], weaknesses: [ { metric: "Tempo Médio de Resolução (MTTR)", value: "3h 15min", impact: "Inaceitável para o padrão de luxo (< 60min), exige mudança de quarto em 15% dos casos." }, { metric: "Taxa de Reincidência", value: "22%", impact: "Indica diagnóstico superficial, elevando custos de mão de obra em 15%." } ], opportunities: [ { title: "Diagnóstico Imediato via App (Foto)", detail: "Reduz o tempo de resolução em 50% e a falha na primeira visita em 90%." }, { title: "Manutenção Preditiva (IoT)", detail: "Elimina 80% das reclamações reativas ao prever falhas em HVAC e hidráulica." } ], threats: [ { title: "Destruição da Percepção de Luxo", detail: "Problemas de manutenção são citados em 90% das avaliações de 1 estrela." }, { title: "Risco de Falhas Estruturais", detail: "Falta de sistema preditivo aumenta o risco de reparos emergenciais de até R$ 50.000." } ] } },
+                "A&B": { severity: 20, impact: 0.05, ActionPlan: [ "Sistema de Reservas Inteligente para ofertas personalizadas.", "Análise de dados para otimizar cardápio e reduzir 10% do desperdício.", "Programa de Fidelidade Digital para o bar, aumentando a recorrência." ], SWOT: { strengths: [ { title: "Localização Privilegiada", detail: "Potencial para bares e restaurantes icônicos, atraindo não-hóspedes." }, { title: "Público Cativo de Alto Poder Aquisitivo", detail: "Hóspedes com alta capacidade de consumo no local." } ], weaknesses: [ { metric: "Ocupação Média (Hóspedes)", value: "25%", impact: "75% dos hóspedes preferem jantar fora do hotel." }, { metric: "Reclamações 'Preço Injusto'", value: "40%", impact: "Desalinhamento entre expectativa de valor e entrega." } ], opportunities: [ { title: "Análise de Sentimento do Cardápio", detail: "Otimizar o cardápio para pratos com margem alta e satisfação garantida (+10% no lucro)." }, { title: "Programa de Fidelidade Digital", detail: "Aumentar o tráfego de não-hóspedes em 20% fora dos horários de pico." } ], threats: [ { title: "Vasta Concorrência Externa", detail: "A Zona Sul do Rio força a competição por preço ou experiência." }, { title: "Baixa Visibilidade Online", detail: "Apenas 5% das reservas via sistemas online indicam falta de otimização digital." } ] } },
+            };
 
-        let ticketIdCounter = 1;
-        const BASE_ANNUAL_REVENUE = 3500000;
-        const intervalId = setInterval(updateTimers, 1000);
-        let activeCategory = null; 
-        
-        const SWOTData = {
-            "Check-in": { severity: 85, impact: 0.35, ActionPlan: [ "Implementação do Módulo de Pré-Check-in Digital, reduzindo o tempo de espera em 90%.", "Treinamento de 'Concierges de Boas-Vindas' (liberados pelo sistema) para elevar o NPS inicial em +10 pontos.", "Integração do Módulo de Upsell na etapa de pré-check-in, visando aumentar a receita por hóspede em 10%." ], SWOT: { strengths: [ { title: "Localização Icônica e Premium", detail: "Situado em frente à praia de Copacabana, este ativo atrai um público de alto poder aquisitivo. Métrica: 95% de aprovação na métrica 'Localização'." }, { title: "Marca com Forte Apelo Histórico", detail: "O legado da marca assegura uma base fiel de clientes. Métrica: 80% de ocupação recorrente (crescimento de 5% A/A)." }, ], weaknesses: [ { metric: "Tempo Médio de Espera", value: "35 min", impact: "Este tempo de espera é 70% maior que a média de hotéis de luxo concorrentes, causando uma quebra imediata na percepção de exclusividade e gerando um pico de reclamações antes mesmo do hóspede chegar ao quarto." }, { metric: "Taxa de Reclamação no 1º Contato", value: "35%", impact: "O alto volume de problemas iniciais exige mais recursos da equipe (40 horas/semana) e desvia o foco de tarefas de valor (ex: concierge)." }, { metric: "Falhas de Sistema", value: "12%", impact: "Lentidão ou falhas no PMS durante o horário de pico prolongam a espera em até 10 minutos por cliente, impactando negativamente 2 em cada 10 hóspedes." } ], opportunities: [ { title: "Implementar Pré-Check-in via App", detail: "Potencial de redução de 90% no tempo de espera, resultando em um aumento projetado de 15% na pontuação de 'Satisfação na Chegada' e liberando 25 horas/semana da equipe da recepção para focar em tarefas de maior valor." }, { title: "Upsells Personalizados na Chegada", detail: "Usar dados do hóspede para oferecer upgrades de quarto ou serviços premium, com uma taxa de conversão projetada de 8% e retorno sobre investimento (ROI) de 150% no primeiro ano." }, ], threats: [ { title: "Perda de Clientes de Primeira Viagem", detail: "Estimativa de perda de 25% dos clientes que tiveram uma má impressão inicial, representando uma receita anual perdida de R$ 875.000,00." }, { title: "Posicionamento da Concorrência", detail: "Concorrentes (ex: Fairmont, Copacabana Palace) já utilizam tecnologia para agilizar o check-in, criando um desnível inaceitável no mercado de luxo e risco de migração de 10% do público-alvo." }, ] } },
-            "Piscina/Área Externa": { severity: 70, impact: 0.25, ActionPlan: [ "Implementação do Módulo de Ocupação em Tempo Real para controle de acesso.", "Otimização da equipe de limpeza e serviço por demanda (Argos-Tasking).", "Criação de áreas VVIP controladas por acesso, gerando uma nova linha de receita de 5% A/A." ], SWOT: { strengths: [ { title: "Design Paisagístico e Vista Deslumbrante", detail: "O principal atrativo visual do hotel, gerando mais de 60% do engajamento em mídias sociais (excluindo o lobby)." }, { title: "Amplo Espaço de Lazer", detail: "Área de 500m² capaz de acomodar confortavelmente 150 pessoas, oferecendo espaço para eventos exclusivos." } ], weaknesses: [ { metric: "Taxa de Ocupação Crítica", value: "70%", impact: "Atingida em 70% dos finais de semana, levando à percepção de superlotação e quebra da experiência de luxo." }, { metric: "Tempo de Limpeza/Reposição", value: "Alto", impact: "A demora na reposição de toalhas e limpeza de mesas gera 40% das reclamações na área externa após as 14h." } ], opportunities: [ { title: "Monitoramento de Ocupação em Tempo Real (IA)", detail: "Permite à gestão de acesso prever e mitigar a superlotação com 30 minutos de antecedência, melhorando a experiência do hóspede e a segurança." }, { title: "Revenue Management em Lazer", detail: "Vender 'Day Use Premium' em horários de baixa ocupação, com potencial de aumentar a receita em R$ 10.000 por semana." } ], threats: [ { title: "Perda de Exclusividade e Luxo", detail: "Comentários em mídias sociais sobre 'piscina lotada' desvalorizam a marca, com risco de queda de 20% nas reservas diretas." }, { title: "Normas Sanitárias Rigorosas", detail: "O risco de multas sanitárias ou fechamento parcial por descumprimento de normas é alto devido à falha na gestão manual de recursos." } ] } },
-            "Serviço de Quarto": { severity: 55, impact: 0.20, ActionPlan: [ "Implementação de Pedidos via QR Code/App, eliminando erros de transcrição e comunicação (18% de redução de erros).", "Sistema de 'Dispatch Inteligente' que roteia o pedido para o funcionário mais próximo/disponível.", "Upselling automatizado na plataforma de pedido, visando +15% no valor médio do ticket." ], SWOT: { strengths: [ { title: "Potencial de Alta Margem de Lucro", detail: "O serviço de quarto é uma fonte de receita controlada, com potencial de margem líquida de 50% se a eficiência for otimizada." }, { title: "Conveniência Exclusiva para o Hóspede", detail: "É um ponto de contato direto e de conveniência, essencial para a percepção de um serviço 5 estrelas." } ], weaknesses: [ { metric: "Tempo Médio de Entrega", value: "48 min", impact: "A demora de quase uma hora (pico) resulta em 75% dos pedidos chegando frios ou com qualidade comprometida. Padrão de luxo: 20 min." }, { metric: "Taxa de Erro no Pedido", value: "18%", impact: "O alto índice de erros (cód.: 'Pedido Errado') custa ao hotel R$ 5.000/mês em custos de refação e vouchers de desculpa." }, { metric: "Dificuldade de Contato", value: "15%", impact: "A linha telefônica fica ocupada em 15% das tentativas, forçando o hóspede a tentar novamente ou desistir (perda de receita)." } ], opportunities: [ { title: "Pedidos via QR Code/App", detail: "A eliminação de erros de comunicação e gargalos telefônicos pode reduzir o tempo de entrega em 40% e a taxa de erro em 80%." }, { title: "Upselling Automatizado (Argos)", detail: "Sugestões de harmonização de bebidas ou acompanhamentos no momento do pedido, com base no perfil do hóspede, aumenta o ticket médio em 15%." } ], threats: [ { title: "Concorrência de Apps de Delivery", detail: "O hóspede moderno compara o serviço de quarto com apps de delivery (iFood, Rappi), que são 2x mais rápidos e eficientes, levando a uma perda de 30% de potencial receita." }, { title: "Reputação por Serviço Lento", detail: "Frustração do hóspede gerando avaliações negativas que citam 'serviço lento', impactando o ranking em plataformas de viagens." } ] } },
-            "Manutenção": { severity: 40, impact: 0.15, ActionPlan: [ "Sistema de 'Tickets Inteligentes' (com foto) via App para diagnóstico imediato e roteamento.", "Gerência de Acompanhamento em Tempo Real (KPIs de tempo de resposta e resolução) com alertas preditivos.", "Redução do Tempo Médio de Resolução (MTTR) em 75% no primeiro trimestre de implementação." ], SWOT: { strengths: [ { title: "Equipe Interna Qualificada", detail: "Membros da equipe possuem 8+ anos de experiência na estrutura específica do prédio, garantindo conhecimento profundo dos sistemas internos." } ], weaknesses: [ { metric: "Tempo Médio de Resolução (MTTR)", value: "3h 15min", impact: "Este tempo é inaceitável para o padrão de luxo (deveria ser < 60min) e exige a mudança de quarto em 15% dos casos, elevando custos operacionais." }, { metric: "Taxa de Reincidência", value: "22%", impact: "Problemas recorrentes indicam falta de peças ou diagnóstico superficial, elevando os custos de mão de obra em 15% e a insatisfação do hóspede." } ], opportunities: [ { title: "Diagnóstico Imediato via App (Foto)", detail: "Permite que a manutenção prepare a ferramenta e peça antes de ir ao quarto, reduzindo o tempo de resolução em 50% e a falha na primeira visita em 90%." }, { title: "Manutenção Preditiva (IoT)", detail: "Uso de sensores para monitorar sistemas críticos (HVAC, hidráulica) e prever falhas antes que o hóspede as note, eliminando 80% das reclamações reativas." } ], threats: [ { title: "Destruição da Percepção de Luxo", detail: "Problemas de manutenção (ar, chuveiro) são citados em 90% das avaliações que atribuem 1 estrela, desvalorizando o preço da diária." }, { title: "Risco de Acidentes e Falhas Estruturais", detail: "A falta de um sistema preditivo aumenta o risco de falhas maiores e não planejadas, que podem custar até R$ 50.000 em reparos emergenciais." } ] } },
-            "A&B": { severity: 20, impact: 0.05, ActionPlan: [ "Sistema de Reservas Inteligente integrado ao perfil do hóspede para ofertas personalizadas.", "Análise de dados de consumo para otimizar o cardápio e reduzir 10% do desperdício.", "Lançamento de um Programa de Fidelidade Digital para o bar da cobertura, aumentando a recorrência de clientes externos." ], SWOT: { strengths: [ { title: "Localização Privilegiada", detail: "Potencial para bares e restaurantes icônicos com vista para o mar, atraindo não-hóspedes e aumentando o faturamento." }, { title: "Público Cativo de Alto Poder Aquisitivo", detail: "Hóspedes com alta capacidade de consumo no local, desde que o valor percebido esteja alinhado." } ], weaknesses: [ { metric: "Ocupação Média (Hóspedes)", value: "25%", impact: "Baixo aproveitamento da receita, indicando que 75% dos hóspedes preferem jantar fora do hotel." }, { metric: "Reclamações 'Preço Injusto'", value: "40%", impact: "O alto índice de reclamações de preço sugere um desalinhamento entre a expectativa de valor e a entrega de qualidade/serviço." } ], opportunities: [ { title: "Análise de Sentimento do Cardápio", detail: "Analisar menções e avaliações para otimizar o cardápio, priorizando pratos com margem alta e satisfação garantida (aumento de 10% no lucro)." }, { title: "Programa de Fidelidade Digital", detail: "Transformar visitantes externos em clientes recorrentes, com potencial de aumentar o tráfego em 20% fora dos horários de pico." } ], threats: [ { title: "Vasta Concorrência Externa", detail: "A Zona Sul do Rio possui inúmeros restaurantes e bares de alta qualidade, forçando o hotel a competir com preço ou experiência." }, { title: "Baixa Visibilidade Online", detail: "A baixa taxa de reservas via sistemas online (apenas 5%) indica que os restaurantes e bares não estão otimizados digitalmente." } ] } },
-        };
+            // --- ELEMENTOS DOM ---
+            const rateSlider = document.getElementById('non-return-rate');
+            const rateDisplay = document.getElementById('rate-display');
+            const revenueLostDisplay = document.getElementById('revenue-lost');
+            const categoryLossText = document.getElementById('category-loss-text');
+            const reportButton = document.getElementById('report-button');
+            const problemInput = document.getElementById('problem-input');
+            const ticketList = document.getElementById('ticket-list');
+            const heatmapBars = document.querySelectorAll('.bar');
+            const swotModalOverlay = document.getElementById('swot-modal-overlay');
+            const swotTitle = document.getElementById('swot-title');
+            const swotContentWrapper = document.getElementById('swot-content-wrapper');
+            const closeSwotModalButton = document.getElementById('close-swot-modal');
+            let tickets = [];
 
-        const rateSlider = document.getElementById('non-return-rate');
-        const rateDisplay = document.getElementById('rate-display');
-        const revenueLostDisplay = document.getElementById('revenue-lost');
-        const categoryLossText = document.getElementById('category-loss-text');
-        const reportButton = document.getElementById('report-button');
-        const problemInput = document.getElementById('problem-input');
-        const ticketList = document.getElementById('ticket-list');
-        const heatmapBars = document.querySelectorAll('.bar');
-        const swotModalOverlay = document.getElementById('swot-modal-overlay');
-        const swotTitle = document.getElementById('swot-title');
-        const swotContentWrapper = document.getElementById('swot-content-wrapper');
-        const closeSwotModalButton = document.getElementById('close-swot-modal');
-
-        let tickets = [];
-
-        function updateRevenueLost() {
-            const baseRate = parseInt(rateSlider.value) / 100;
-            rateDisplay.textContent = rateSlider.value;
-            let totalLoss = BASE_ANNUAL_REVENUE * baseRate;
-            let currentLossText = "Perda total estimada:";
-            if (activeCategory && SWOTData[activeCategory]) {
-                totalLoss = totalLoss * SWOTData[activeCategory].impact;
-                currentLossText = `Perda estimada por falhas em "${activeCategory}":`;
-            }
-            revenueLostDisplay.textContent = 'R$ ' + Math.round(totalLoss).toLocaleString('pt-BR', { minimumFractionDigits: 0 });
-            categoryLossText.textContent = currentLossText;
-        }
-
-        rateSlider.addEventListener('input', updateRevenueLost);
-        
-        heatmapBars.forEach(bar => {
-            bar.addEventListener('click', (event) => {
-                event.stopPropagation();
-                const category = bar.dataset.category;
-                if (activeCategory === category && swotModalOverlay.classList.contains('open')) {
-                    closeSWOTModal();
-                    return;
+            // --- FUNÇÕES ---
+            function updateRevenueLost() {
+                const baseRate = parseInt(rateSlider.value) / 100;
+                rateDisplay.textContent = rateSlider.value;
+                let totalLoss = BASE_ANNUAL_REVENUE * baseRate;
+                let currentLossText = "Perda total estimada:";
+                if (activeCategory && SWOTData[activeCategory]) {
+                    totalLoss = totalLoss * SWOTData[activeCategory].impact;
+                    currentLossText = `Perda estimada por falhas em "${activeCategory}":`;
                 }
-                activeCategory = category;
-                heatmapBars.forEach
+                revenueLostDisplay.textContent = 'R$ ' + Math.round(totalLoss).toLocaleString('pt-BR', { minimumFractionDigits: 0 });
+                categoryLossText.textContent = currentLossText;
+            }
+
+            function renderSWOTModal(category) {
+                const data = SWOTData[category];
+                if (!data) return;
+                swotTitle.innerHTML = `<i data-feather="monitor"></i> Análise SWOT: ${category}`;
+                const renderStructuredList = (items) => items.map(item => `<li><strong>${item.title}</strong><p>${item.detail}</p></li>`).join('');
+                const weaknessesTable = data.SWOT.weaknesses.map(w => `<tr><td>${w.metric}</td><td class="danger">${w.value}</td><td>${w.impact}</td></tr>`).join('');
+                const actionPlanHtml = data.ActionPlan.map((p, index) => `<div class="action-point"><span class="step-number">${index + 1}</span><p>${p}</p></div>`).join('');
+                const html = `
+                    <div class="swot-grid">
+                        <div class="swot-quadrant quadrant-strengths"><h3><i data-feather="shield"></i> Forças</h3><ul>${renderStructuredList(data.SWOT.strengths)}</ul></div>
+                        <div class="swot-quadrant quadrant-weaknesses"><h3><i data-feather="alert-triangle"></i> Fraquezas</h3><table class="metric-table"><thead><tr><th>Métrica</th><th>Valor</th><th>Detalhe/Impacto</th></tr></thead><tbody>${weaknessesTable}</tbody></table></div>
+                        <div class="swot-quadrant quadrant-opportunities"><h3><i data-feather="trending-up"></i> Oportunidades</h3><ul>${renderStructuredList(data.SWOT.opportunities)}</ul></div>
+                        <div class="swot-quadrant quadrant-threats"><h3><i data-feather="zap"></i> Ameaças</h3><ul>${renderStructuredList(data.SWOT.
