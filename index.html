@@ -3,245 +3,204 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Intellisense AI - Ativo de Guerra: Simulador Operacional Nacional (v3.1)</title>
-    
-    <!-- MÓDULO 2: Tipografia Elevada (Manrope) -->
+    <title>Intellisense AI - Ativo de Guerra: Simulador Operacional Nacional (v4.0)</title>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Ícones Vetoriais de Alta Qualidade (Feather Icons ) -->
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
-
     <style>
-        /* MÓDULO 2: REFINAMENTO VISUAL v3.1 - Luxo e Sofisticação */
         :root {
-            --color-primary: #0a84ff; 
-            --color-danger: #ff453a; 
-            --color-success: #34c759; 
-            --color-warning: #ff9f0a;
-            --color-bg-dark: #121212; 
-            --color-bg-gradient-start: #1c1c1e;
-            --color-bg-gradient-end: #121212;
-            --color-text-light: #f2f2f7;
-            --color-card-bg: rgba(44, 44, 46, 0.7 ); 
-            --color-card-border: rgba(58, 58, 60, 0.5); 
+            --color-primary: #0a84ff; --color-danger: #ff453a; --color-success: #34c759; --color-warning: #ff9f0a;
+            --color-bg-dark: #121212; --color-bg-gradient-start: #1c1c1e; --color-bg-gradient-end: #121212;
+            --color-text-light: #f2f2f7; --color-card-bg: rgba(44, 44, 46, 0.7 ); --color-card-border: rgba(58, 58, 60, 0.5);
             --font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            --backdrop-blur: 15px; 
+            --backdrop-blur: 15px;
         }
         body {
-            font-family: var(--font-family);
-            background: radial-gradient(circle at top left, var(--color-bg-gradient-start) 0%, var(--color-bg-gradient-end) 100%); 
-            color: var(--color-text-light);
-            margin: 0;
-            padding: 2rem;
-            line-height: 1.6;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            overflow-x: hidden;
+            font-family: var(--font-family); background: radial-gradient(circle at top left, var(--color-bg-gradient-start) 0%, var(--color-bg-gradient-end) 100%);
+            color: var(--color-text-light); margin: 0; padding: 2rem; line-height: 1.6; min-height: 100vh;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; overflow-x: hidden;
         }
         .dashboard {
-            max-width: 1200px;
-            width: 100%;
-            margin: 0 auto;
-            display: grid;
-            gap: 2rem;
-            grid-template-columns: repeat(12, 1fr);
-            opacity: 0; 
-            transform: translateY(20px); 
-            animation: fadeInSlideUp 0.8s ease-out forwards;
+            max-width: 1200px; width: 100%; margin: 0 auto; display: grid; gap: 2rem; grid-template-columns: repeat(12, 1fr);
+            opacity: 0; transform: translateY(20px); animation: fadeInSlideUp 0.8s ease-out forwards;
         }
         .card {
-            background-color: var(--color-card-bg);
-            padding: 1.5rem;
-            border-radius: 12px;
-            border: 1px solid var(--color-card-border);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(var(--backdrop-blur));
-            -webkit-backdrop-filter: blur(var(--backdrop-blur));
+            background-color: var(--color-card-bg); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--color-card-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); backdrop-filter: blur(var(--backdrop-blur)); -webkit-backdrop-filter: blur(var(--backdrop-blur));
         }
         h1, h2, h3 { margin-top: 0; font-weight: 600; }
-        h1 { font-size: 2.5rem; color: white; letter-spacing: 0.05em; }
+        h1 { font-size: 2.5rem; color: white; }
         h2 { color: var(--color-primary); border-bottom: 1px solid var(--color-card-border); padding-bottom: 0.75rem; margin-bottom: 1rem; font-size: 1.5rem; display: flex; align-items: center;}
-        h2 i { margin-right: 10px; } 
+        h2 i { margin-right: 10px; }
         h3 { font-size: 1.2rem; color: var(--color-text-light); opacity: 0.8; }
-
-        /* Layout e Animações */
         .header { grid-column: 1 / -1; text-align: center; margin-bottom: 2rem; }
         .cost-calculator { grid-column: 1 / -1; text-align: center; animation-delay: 0.2s; }
         .heatmap { grid-column: 1 / 8; animation-delay: 0.4s; }
         .ticket-simulator-wrapper { grid-column: 8 / -1; animation-delay: 0.6s; }
-        
-        @keyframes fadeInSlideUp {
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Calculadora de Custo */
+        @keyframes fadeInSlideUp { to { opacity: 1; transform: translateY(0); } }
         #revenue-lost {
-            font-size: 5rem;
-            color: var(--color-danger);
-            font-weight: 700;
-            text-align: center;
-            margin: 1rem 0;
-            animation: pulse 1.5s infinite alternate;
-            text-shadow: 0 0 20px var(--color-danger); 
+            font-size: 5rem; color: var(--color-danger); font-weight: 700; text-align: center; margin: 1rem 0;
+            animation: pulse 1.5s infinite alternate; text-shadow: 0 0 20px var(--color-danger);
         }
         @keyframes pulse {
             from { transform: scale(1); text-shadow: 0 0 20px rgba(255, 69, 58, 0.4); }
             to { transform: scale(1.03); text-shadow: 0 0 35px rgba(255, 69, 58, 0.8); }
         }
         input[type="range"] { width: 60%; margin: 1rem auto; }
-
-        /* Mapa de Calor */
         .bar {
-            background: linear-gradient(90deg, var(--color-primary) 0%, #0a84ff88 100%);
-            border-radius: 6px; transition: all 0.3s ease; cursor: pointer;
-            /* ... outros estilos ... */
+            height: 35px; background: linear-gradient(90deg, var(--color-primary) 0%, #0a84ff88 100%); color: white; text-align: left;
+            padding-left: 15px; line-height: 35px; border-radius: 6px; font-weight: 500; transition: all 0.3s ease;
+            display: flex; justify-content: space-between; padding-right: 15px; cursor: pointer;
         }
-        .bar:hover { transform: scale(1.02); } 
-        .bar.active-drilldown {
-            transform: scale(1.03);
-            border: 2px solid var(--color-success);
-            box-shadow: 0 0 15px rgba(52, 199, 89, 0.5);
-        }
-        .bar.faded { opacity: 0.3; } 
-
-        /* Simulador de Tickets */
-        .guest-view button:active { transform: scale(0.98); }
-        .ticket-card {
-            animation: slideInTicket 0.3s ease-out forwards;
-        }
-        @keyframes slideInTicket {
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .status-solved { color: var(--color-success); font-weight: 700; } 
-        .ticket-card .action-button {
-            background-color: var(--color-success);
-            /* ... outros estilos ... */
-        }
-        .ticket-card .ia-solution {
-            font-size: 0.85rem; color: var(--color-success); margin-top: 10px; padding-top: 8px;
-            border-top: 1px dashed var(--color-card-border);
-        }
-        
-        /* Modal SWOT */
+        .bar:hover { transform: scale(1.02); }
+        .bar.active-drilldown { transform: scale(1.03); border: 2px solid var(--color-success); box-shadow: 0 0 15px rgba(52, 199, 89, 0.5); }
+        .bar.faded { opacity: 0.3; }
+        .ticket-card { animation: slideInTicket 0.3s ease-out forwards; }
+        @keyframes slideInTicket { to { opacity: 1; transform: translateY(0); } }
         .swot-modal-overlay {
-            /* ... estilos do modal ... */
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.9);
+            display: none; align-items: center; justify-content: center; z-index: 1000; opacity: 0; transition: opacity 0.3s ease;
         }
-        .swot-quadrant h3 {
-            /* ... estilos dos quadrantes ... */
+        .swot-modal-overlay.open { display: flex; opacity: 1; }
+        .swot-modal {
+            width: 90%; max-width: 1400px; height: 90vh; background-color: var(--color-card-bg); border-radius: 15px;
+            border: 1px solid var(--color-primary); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7); padding: 30px;
+            position: relative; overflow-y: auto; backdrop-filter: blur(var(--backdrop-blur));
         }
-        .quadrant-strengths h3 { color: var(--color-success); }
-        .quadrant-weaknesses h3 { color: var(--color-danger); }
-        .quadrant-opportunities h3 { color: var(--color-primary); }
-        .quadrant-threats h3 { color: var(--color-warning); }
-
-        .metric-table {
-            /* ... estilos da tabela ... */
-        }
+        .swot-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--color-card-border); padding-bottom: 15px; margin-bottom: 20px; }
+        .swot-header h2 { font-size: 2rem; margin: 0; border-bottom: none; padding-bottom: 0; }
+        .close-button { background: none; border: none; color: white; cursor: pointer; font-size: 1.5rem; opacity: 0.7; transition: opacity 0.2s ease; }
+        .close-button:hover { opacity: 1; }
+        .swot-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        .swot-quadrant { background-color: rgba(68, 68, 70, 0.8); padding: 20px; border-radius: 10px; border: 1px solid var(--color-card-border); }
+        .swot-quadrant h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 15px; opacity: 1; }
+        .quadrant-strengths h3 { color: var(--color-success); } .quadrant-weaknesses h3 { color: var(--color-danger); }
+        .quadrant-opportunities h3 { color: var(--color-primary); } .quadrant-threats h3 { color: var(--color-warning); }
+        .metric-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.95rem; }
+        .metric-table th, .metric-table td { padding: 10px; text-align: left; border-bottom: 1px solid var(--color-card-border); }
+        .metric-table th { color: var(--color-primary); font-weight: 600; }
+        @media (max-width: 1024px) { .dashboard, .swot-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
-    <!-- O HTML permanece o mesmo, apenas o script e o CSS são alterados -->
     <div class="dashboard">
-        <!-- ... Seu HTML perfeito ... -->
+        <header class="header">
+            <h1>Intellisense AI - Ativo de Guerra: Simulador Operacional Nacional</h1>
+            <p>Dashboard de Eficiência - A Forja da Persuasão Digital</p>
+        </header>
+        <div class="card cost-calculator">
+            <h2><i data-feather="dollar-sign"></i> Calculadora do Custo da Ineficiência</h2>
+            <p>Taxa de Não-Retorno de Clientes Insatisfeitos (Slider)</p>
+            <input type="range" id="non-return-rate" min="1" max="50" value="15" step="1">
+            <p>Taxa Estimada de Não-Retorno: <span id="rate-display">15</span>%</p>
+            <h3><span id="category-loss-text">Receita Anual Perdida:</span></h3>
+            <div id="revenue-lost">R$ 0,00</div>
+            <small>*Base de cálculo: Faturamento Anual de R$ 3.500.000.</small>
+        </div>
+        <div class="card heatmap">
+            <h2><i data-feather="activity"></i> Mapa de Calor de Falhas (Argos Data)</h2>
+            <p>Análise de 500 avaliações negativas - Áreas de Maior Severidade</p>
+            <div id="heatmap-container">
+                <div class="bar" data-category="Check-in"><span class="bar-label">Check-in</span><span class="bar-value">(85%)</span></div>
+                <div class="bar" data-category="Piscina/Área Externa"><span class="bar-label">Piscina/Área Externa</span><span class="bar-value">(70%)</span></div>
+                <div class="bar" data-category="Serviço de Quarto"><span class="bar-label">Serviço de Quarto</span><span class="bar-value">(55%)</span></div>
+                <div class="bar" data-category="Manutenção"><span class="bar-label">Manutenção</span><span class="bar-value">(40%)</span></div>
+                <div class="bar" data-category="A&B"><span class="bar-label">A&B</span><span class="bar-value">(20%)</span></div>
+            </div>
+            <small>Passe o mouse para ver exemplos e **clique em uma barra para Análise SWOT**.</small>
+        </div>
+        <div class="card ticket-simulator-wrapper">
+            <h2><i data-feather="tag"></i> Simulador de Tickets Inteligentes</h2>
+            <div class="guest-view">
+                <h3>Visão do Hóspede</h3>
+                <input type="text" id="problem-input" placeholder="Ex: 'Ar-condicionado não gela.'">
+                <button id="report-button">🚨 Reportar Problema</button>
+            </div>
+            <hr style="border-color: var(--color-card-border); margin: 1.5rem 0;">
+            <div class="manager-view">
+                <h3>Visão do Gerente</h3>
+                <div id="ticket-list"></div>
+            </div>
+        </div>
     </div>
-
     <div class="swot-modal-overlay" id="swot-modal-overlay">
-        <!-- ... Seu Modal SWOT ... -->
+        <div class="swot-modal" id="swot-modal">
+            <div class="swot-header">
+                <h2 id="swot-title"></h2>
+                <button class="close-button" id="close-swot-modal"><i data-feather="x"></i></button>
+            </div>
+            <div class="swot-grid" id="swot-grid-content"></div>
+        </div>
     </div>
-
     <script>
-        // Inicializa Feather Icons
-        feather.replace();
-
-        // --- DADOS E CONFIGURAÇÕES ---
-        const SWOTData = {
-            "Check-in": { severity: 85, impact: 0.35, SWOT: { /* ... dados ... */ } },
-            "Piscina/Área Externa": { severity: 70, impact: 0.25, SWOT: { /* ... dados ... */ } },
-            "Serviço de Quarto": { severity: 55, impact: 0.20, SWOT: { /* ... dados ... */ } },
-            "Manutenção": { severity: 40, impact: 0.15, SWOT: { /* ... dados ... */ } },
-            "A&B": { severity: 20, impact: 0.05, SWOT: { /* ... dados ... */ } }
-        };
-        // (O objeto SWOTData completo da sua versão anterior vai aqui, sem alterações)
-
-        // --- ELEMENTOS DOM ---
-        const rateSlider = document.getElementById('non-return-rate');
-        const rateDisplay = document.getElementById('rate-display');
-        const revenueLostDisplay = document.getElementById('revenue-lost');
-        const categoryLossText = document.getElementById('category-loss-text');
-        const heatmapBars = document.querySelectorAll('.bar');
-        const swotModalOverlay = document.getElementById('swot-modal-overlay');
-        // ... outros elementos ...
-
-        let activeCategory = null; 
-
-        // --- LÓGICA PRINCIPAL ---
-
-        // PRIORIDADE 1: CORREÇÃO DO BUG E CRIAÇÃO DO ELO LÓGICO
-        function updateRevenueLost() {
-            const baseRate = parseInt(rateSlider.value) / 100;
-            rateDisplay.textContent = rateSlider.value;
-            const BASE_ANNUAL_REVENUE = 3500000;
-            let totalLoss = BASE_ANNUAL_REVENUE * baseRate;
-            let currentLossText = "Perda total estimada:";
-
-            if (activeCategory && SWOTData[activeCategory]) {
-                // ELO LÓGICO: A perda é recalculada com base no impacto da categoria
-                totalLoss *= SWOTData[activeCategory].impact;
-                currentLossText = `Perda estimada por falhas em "${activeCategory}":`;
-            }
-            
-            revenueLostDisplay.textContent = 'R$ ' + totalLoss.toLocaleString('pt-BR', { minimumFractionDigits: 0 });
-            categoryLossText.textContent = currentLossText;
-        }
-
-        rateSlider.addEventListener('input', updateRevenueLost);
-        
-        // PRIORIDADE 2: LÓGICA DO MODAL SWOT
-        heatmapBars.forEach(bar => {
-            bar.addEventListener('click', () => {
-                const category = bar.dataset.category;
-                
-                // Se clicar na mesma barra, desativa o filtro
-                if (activeCategory === category) {
-                    closeSWOTModal();
-                    return;
-                }
-
-                activeCategory = category;
-                
-                heatmapBars.forEach(b => b.classList.add('faded'));
-                bar.classList.remove('faded');
-                bar.classList.add('active-drilldown');
-
-                updateRevenueLost(); // Recalcula a perda com o filtro
-                renderSWOTModal(category);
-            });
-        });
-
-        function closeSWOTModal() {
-            swotModalOverlay.classList.remove('open');
-            heatmapBars.forEach(b => b.classList.remove('active-drilldown', 'faded'));
-            activeCategory = null;
-            updateRevenueLost(); // Volta ao cálculo total
-        }
-
-        function renderSWOTModal(category) {
-            const data = SWOTData[category];
-            // ... Lógica de renderização do modal (sem o gráfico) ...
-            // (O código para preencher o modal da sua versão anterior vai aqui, mas sem a parte do Chart.js)
-        }
-
-        // --- LÓGICA DO SIMULADOR DE TICKETS ---
-        // (Todo o seu código de tickets, incluindo a melhoria do botão "Solução Inteligente", vai aqui)
-
-        // --- INICIALIZAÇÃO ---
         document.addEventListener('DOMContentLoaded', () => {
-            updateRevenueLost(); // **CHAMADA INICIAL CORRIGIDA**
+            feather.replace();
+            const SWOTData = {
+                "Check-in": { impact: 0.35, SWOT: { strengths: ["Localização icônica.", "Marca com apelo histórico."], weaknesses: [{ metric: "Tempo Médio de Espera", value: "35 min" }, { metric: "Taxa de Reclamação", value: "35%" }], opportunities: ["Implementar pré-check-in via app.", "Usar dados para upsells personalizados."], threats: ["Perda de 25% dos clientes de primeira viagem.", "Concorrentes já usam tecnologia similar."] } },
+                "Piscina/Área Externa": { impact: 0.25, SWOT: { strengths: ["Design paisagístico e vista.", "Amplo espaço de lazer."], weaknesses: [{ metric: "Percepção de Superlotação", value: "70%" }, { metric: "Tempo de Limpeza", value: "Alto" }], opportunities: ["Monitoramento de ocupação por IA.", "Criação de áreas VVIP."], threats: ["Perda de exclusividade.", "Comentários negativos em mídias sociais."] } },
+                "Serviço de Quarto": { impact: 0.20, SWOT: { strengths: ["Alta margem de lucro potencial.", "Ponto de contato privado com hóspede."], weaknesses: [{ metric: "Tempo Médio de Entrega", value: "48 min" }, { metric: "Taxa de Erro no Pedido", value: "18%" }], opportunities: ["Pedidos via QR Code/App.", "Upselling automatizado no pedido."], threats: ["Concorrência com apps de delivery.", "Avaliações negativas sobre 'serviço lento'."] } },
+                "Manutenção": { impact: 0.15, SWOT: { strengths: ["Equipe interna com conhecimento do prédio."], weaknesses: [{ metric: "Tempo Médio de Resolução", value: "3h 15min" }, { metric: "Taxa de Reincidência", value: "22%" }], opportunities: ["Sistema de 'Tickets Inteligentes' com fotos.", "Manutenção preditiva baseada em dados."], threats: ["Destruição da percepção de 'luxo'.", "Risco de falhas estruturais maiores."] } },
+                "A&B": { impact: 0.05, SWOT: { strengths: ["Localização privilegiada.", "Público cativo com alto poder aquisitivo."], weaknesses: [{ metric: "Ocupação do Restaurante", value: "25%" }, { metric: "Reclamações de 'Preço Injusto'", value: "40%" }], opportunities: ["Ofertas personalizadas baseadas em perfil.", "Análise de dados para otimizar cardápio."], threats: ["Vasta concorrência na Zona Sul.", "Hóspedes preferem sair do hotel para comer."] } }
+            };
+            const rateSlider = document.getElementById('non-return-rate');
+            const rateDisplay = document.getElementById('rate-display');
+            const revenueLostDisplay = document.getElementById('revenue-lost');
+            const categoryLossText = document.getElementById('category-loss-text');
+            const heatmapBars = document.querySelectorAll('.bar');
+            const swotModalOverlay = document.getElementById('swot-modal-overlay');
+            const swotTitle = document.getElementById('swot-title');
+            const swotGridContent = document.getElementById('swot-grid-content');
+            const closeSwotModalButton = document.getElementById('close-swot-modal');
+            let activeCategory = null;
+            function updateRevenueLost() {
+                const baseRate = parseInt(rateSlider.value) / 100;
+                rateDisplay.textContent = rateSlider.value;
+                const BASE_ANNUAL_REVENUE = 3500000;
+                let totalLoss = BASE_ANNUAL_REVENUE * baseRate;
+                let currentLossText = "Receita Anual Perdida:";
+                if (activeCategory && SWOTData[activeCategory]) {
+                    totalLoss *= SWOTData[activeCategory].impact;
+                    currentLossText = `Perda estimada por falhas em "${activeCategory}":`;
+                }
+                revenueLostDisplay.textContent = 'R$ ' + totalLoss.toLocaleString('pt-BR', { minimumFractionDigits: 0 });
+                categoryLossText.textContent = currentLossText;
+            }
+            function renderSWOTModal(category) {
+                const data = SWOTData[category];
+                if (!data) return;
+                swotTitle.innerHTML = `<i data-feather="search"></i> Análise SWOT: ${category}`;
+                const renderList = (items) => `<ul>${items.map(item => `<li>${item}</li>`).join('')}</ul>`;
+                const weaknessesTable = `<table class="metric-table"><thead><tr><th>Métrica</th><th>Valor</th></tr></thead><tbody>${data.SWOT.weaknesses.map(w => `<tr><td>${w.metric}</td><td>${w.value}</td></tr>`).join('')}</tbody></table>`;
+                swotGridContent.innerHTML = `
+                    <div class="swot-quadrant quadrant-strengths"><h3><i data-feather="shield"></i> Forças</h3>${renderList(data.SWOT.strengths)}</div>
+                    <div class="swot-quadrant quadrant-weaknesses"><h3><i data-feather="alert-triangle"></i> Fraquezas</h3>${weaknessesTable}</div>
+                    <div class="swot-quadrant quadrant-opportunities"><h3><i data-feather="trending-up"></i> Oportunidades</h3>${renderList(data.SWOT.opportunities)}</div>
+                    <div class="swot-quadrant quadrant-threats"><h3><i data-feather="cloud-lightning"></i> Ameaças</h3>${renderList(data.SWOT.threats)}</div>`;
+                swotModalOverlay.classList.add('open');
+                feather.replace();
+            }
+            function closeSWOTModal() {
+                swotModalOverlay.classList.remove('open');
+                heatmapBars.forEach(b => b.classList.remove('active-drilldown', 'faded'));
+                activeCategory = null;
+                updateRevenueLost();
+            }
+            rateSlider.addEventListener('input', updateRevenueLost);
+            heatmapBars.forEach(bar => {
+                bar.addEventListener('click', () => {
+                    const category = bar.dataset.category;
+                    if (activeCategory === category) { closeSWOTModal(); return; }
+                    activeCategory = category;
+                    heatmapBars.forEach(b => b.classList.add('faded'));
+                    bar.classList.remove('faded');
+                    bar.classList.add('active-drilldown');
+                    updateRevenueLost();
+                    renderSWOTModal(category);
+                });
+            });
+            closeSwotModalButton.addEventListener('click', closeSWOTModal);
+            swotModalOverlay.addEventListener('click', (e) => { if (e.target === swotModalOverlay) closeSWOTModal(); });
+            updateRevenueLost();
         });
-
     </script>
 </body>
 </html>
