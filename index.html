@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Intellisense AI - Ativo de Guerra: Simulador Operacional Nacional (v6.0 - Juízo Final)</title>
+    <title>Intellisense AI - Ativo de Guerra: Simulador Operacional Nacional (v6.1 - Toque de Mestre)</title>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
     <!-- Adicionando Chart.js para o Gráfico de Projeção de ROI -->
@@ -15,7 +15,7 @@
             --color-text-light: #f2f2f7; --color-card-bg: rgba(44, 44, 46, 0.7 ); --color-card-border: rgba(58, 58, 60, 0.5);
             --font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             --backdrop-blur: 15px;
-            --color-info: #007aff; /* Novo para Gráfico/Tabela */
+            --color-info: #007aff; 
         }
         body {
             font-family: var(--font-family); background: radial-gradient(circle at top left, var(--color-bg-gradient-start) 0%, var(--color-bg-gradient-end) 100%);
@@ -105,9 +105,18 @@
         .swot-item h4 { font-size: 1.1rem; margin: 1rem 0 0.5rem 0; display: flex; align-items: center; }
         .swot-item h4 i { margin-right: 8px; color: var(--color-primary); }
         .swot-item p { font-size: 0.95rem; opacity: 0.8; margin: 0 0 1rem 28px; border-left: 2px solid var(--color-card-border); padding-left: 15px; }
-        .swot-solution-banner { grid-column: 1 / -1; background: linear-gradient(90deg, var(--color-success) 0%, #34c75988 100%); color: white; padding: 20px; border-radius: 10px; margin-top: 20px; }
-        .swot-solution-banner h3 { color: white; border: none; }
-        .swot-solution-banner ul { padding-left: 20px; }
+        .swot-solution-banner { 
+            grid-column: 1 / -1; 
+            background: linear-gradient(90deg, var(--color-success) 0%, #34c75988 100%); 
+            color: white; 
+            padding: 20px; 
+            border-radius: 10px; 
+            margin-top: 20px;
+            box-shadow: 0 0 20px rgba(52, 199, 89, 0.5);
+        }
+        .swot-solution-banner h3 { color: white; border: none; margin-bottom: 10px; }
+        .swot-solution-banner ul { padding-left: 20px; list-style-type: '⚡ '; }
+        .swot-solution-banner li { margin-bottom: 8px; font-weight: 500;}
         
         /* NEW Deep Dive Analytics Styles */
         .deep-dive-analytics { grid-column: 1 / -1; margin-top: 30px; }
@@ -176,7 +185,7 @@
     <div class="dashboard">
         <header class="header">
             <h1>Intellisense AI - Ativo de Guerra: Simulador Operacional Nacional</h1>
-            <p>Dashboard de Eficiência - A Forja da Persuasão Digital (v6.0 - Juízo Final)</p>
+            <p>Dashboard de Eficiência - A Forja da Persuasão Digital (v6.1 - Toque de Mestre)</p>
             <div id="user-id-display"></div>
         </header>
         <div class="card cost-calculator">
@@ -310,7 +319,6 @@
                     opportunities: [{title:"Implementar Pré-Check-in via App", detail:"Potencial de redução de 90% no tempo de espera, resultando em um aumento projetado de 15% na pontuação de 'Satisfação na Chegada'."}], 
                     threats: [{title:"Perda de Clientes de Primeira Viagem", detail:"Nossa análise estima que 25% dos hóspedes que enfrentam um check-in ruim não retornam, representando um risco direto à receita recorrente."}] 
                 },
-                // Deep Dive Analytics Data
                 deepDive: {
                     benchmark: [
                         { metric: "Tempo Médio de Check-in", nacional: "35 min", benchmark: "5 min" },
@@ -321,7 +329,12 @@
                         gain: 120000,
                         cost: 80000
                     }
-                }
+                },
+                // PRIORIDADE 1: Solução Personalizada
+                solution: [
+                    "Implementar Módulo de Pré-Check-in e Upsell para reduzir o tempo de espera em 90% e aumentar a receita por hóspede.",
+                    "Integrar sistema com fechaduras digitais para permitir acesso via QR Code, eliminando filas."
+                ]
             },
             "Piscina/Área Externa": { 
                 impact: 0.25, 
@@ -341,7 +354,12 @@
                         gain: 50000,
                         cost: 45000
                     }
-                }
+                },
+                // PRIORIDADE 1: Solução Personalizada
+                solution: [
+                    "Instalar sensores de IA para monitorar a ocupação em tempo real e alertar a gerência sobre superlotação.",
+                    "Implementar sistema de 'Tickets Inteligentes' para a equipe de limpeza e bar, otimizando a reposição de toalhas e o serviço."
+                ]
             },
             "Serviço de Quarto": { 
                 impact: 0.20, 
@@ -361,7 +379,12 @@
                         gain: 95000,
                         cost: 70000
                     }
-                }
+                },
+                // PRIORIDADE 1: Solução Personalizada
+                solution: [
+                    "Lançar cardápio digital via QR Code para eliminar erros de comunicação e reduzir o tempo de pedido em 80%.",
+                    "Implementar sistema de 'dispatch' inteligente que notifica o funcionário mais próximo quando o pedido está pronto."
+                ]
             },
             "Manutenção": { 
                 impact: 0.15, 
@@ -381,7 +404,12 @@
                         gain: 75000,
                         cost: 60000
                     }
-                }
+                },
+                // PRIORIDADE 1: Solução Personalizada
+                solution: [
+                    "Implementar o Sistema de Tickets Inteligentes para reduzir o tempo de resolução da Manutenção em 75%.",
+                    "Adotar a Manutenção Preditiva (IoT) para identificar falhas em ar-condicionado e hidráulica antes da reclamação do hóspede."
+                ]
             },
             "A&B": { 
                 impact: 0.05, 
@@ -401,7 +429,12 @@
                         gain: 40000,
                         cost: 30000
                     }
-                }
+                },
+                // PRIORIDADE 1: Solução Personalizada
+                solution: [
+                    "Utilizar Análise de Dados para otimizar o cardápio, eliminando pratos de baixo consumo e alta complexidade/custo.",
+                    "Criar ofertas personalizadas (com base no histórico de check-in) para atrair hóspedes ao restaurante, aumentando a ocupação para 50%."
+                ]
             }
         };
 
@@ -511,11 +544,12 @@
                     plugins: {
                         legend: {
                             display: false,
+                            labels: { color: 'var(--color-text-light)' } // PRIORIDADE 2: Cor da legenda
                         },
                         title: {
                             display: true,
                             text: roiData.title,
-                            color: 'var(--color-text-light)',
+                            color: 'var(--color-text-light)', // PRIORIDADE 2: Cor do título
                             font: { size: 16, weight: '700' }
                         },
                         tooltip: {
@@ -532,12 +566,12 @@
                     },
                     scales: {
                         x: {
-                            ticks: { color: 'var(--color-text-light)', callback: formatCurrency },
-                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                            ticks: { color: 'var(--color-text-light)', callback: formatCurrency }, // PRIORIDADE 2: Cor dos labels X
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' } // PRIORIDADE 2: Cor das linhas de grade X
                         },
                         y: {
-                            ticks: { color: 'var(--color-text-light)' },
-                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                            ticks: { color: 'var(--color-text-light)' }, // PRIORIDADE 2: Cor dos labels Y
+                            grid: { display: false } // PRIORIDADE 2: Oculta linhas de grade Y
                         }
                     }
                 }
@@ -568,7 +602,15 @@
             // 2. Render SWOT Quadrants
             swotTitle.innerHTML = `<i data-feather="search"></i> Análise SWOT: ${category}`;
             const renderItems = (items) => items.map(item => `<div class="swot-item"><h4><i data-feather="chevrons-right"></i> ${item.title}</h4><p>${item.detail}</p></div>`).join('');
-            const solutionBanner = `<div class="swot-solution-banner"><h3><i data-feather="tool"></i> Plano de Ação Recomendado (Intellisense AI)</h3><ul><li>Implementação do Sistema de Tickets Inteligentes para reduzir o tempo de resolução da Manutenção em 75%.</li><li>Lançamento do Módulo de Pré-Check-in e Upsell para otimizar a recepção e aumentar a receita por hóspede em 10%.</li><li>Integração do Módulo de Análise Preditiva para antecipar falhas operacionais antes que elas impactem o cliente.</li></ul></div>`;
+            
+            // PRIORIDADE 1: Construção Dinâmica do Plano de Ação
+            const solutionList = data.solution.map(point => `<li>${point}</li>`).join('');
+            const solutionBanner = `
+                <div class="swot-solution-banner">
+                    <h3><i data-feather="tool"></i> Plano de Ação Recomendado (Intellisense AI)</h3>
+                    <ul>${solutionList}</ul>
+                </div>
+            `;
             
             swotGridContent.innerHTML = `
                 <div class="swot-quadrant quadrant-strengths"><h3><i data-feather="shield"></i> Forças</h3>${renderItems(data.SWOT.strengths)}</div>
