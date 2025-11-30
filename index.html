@@ -3,239 +3,671 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Intellisense AI - Ativo de Guerra: Simulador Operacional Nacional (v9.0 - A REDENÇÃO)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <title>Intellisense AI - Ativo de Guerra: Simulador Operacional Nacional (v5.0)</title>
+    
+    <!-- MÓDULO 2: Tipografia Elevada (Manrope/Inter) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Ícones Vetoriais de Alta Qualidade (Feather Icons) -->
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+
     <style>
+        /* ========================================================= */
+        /* MÓDULO 2: REFINAMENTO VISUAL v5.0 - Mobile-First & Luxo   */
+        /* ========================================================= */
         :root {
-            --color-primary: #0a84ff; --color-danger: #ff453a; --color-success: #34c759; --color-warning: #ff9f0a;
-            --color-bg-dark: #121212; --color-bg-gradient-start: #1c1c1e; --color-bg-gradient-end: #0d0d0d;
-            --color-text-light: #EAEAEA; --color-card-bg: rgba(44, 44, 46, 0.7  ); --color-card-border: rgba(58, 58, 60, 0.5);
-            --font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            --backdrop-blur: 15px; --color-info: #5e5ce6;
+            --color-primary: #0a84ff; 
+            --color-danger: #ff453a; 
+            --color-success: #34c759; 
+            --color-warning: #ff9f0a;
+            --color-bg-dark: #121212; 
+            --color-bg-gradient-start: #1c1c1e;
+            --color-bg-gradient-end: #121212;
+            --color-text-light: #f2f2f7;
+            --color-card-bg: rgba(44, 44, 46, 0.7 ); 
+            --color-card-border: rgba(58, 58, 60, 0.5); 
+            --font-family: 'Manrope', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            --backdrop-blur: 15px; 
+            --swot-quadrant-bg: rgba(68, 68, 70, 0.4); 
+            --action-plan-bg: #004587; /* Cor distintiva para o Plano de Ação */
         }
         body {
-            font-family: var(--font-family); background: radial-gradient(circle at top left, var(--color-bg-gradient-start) 0%, var(--color-bg-gradient-end) 100%);
-            color: var(--color-text-light); margin: 0; padding: 2rem; line-height: 1.6; min-height: 100vh;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; overflow-x: hidden;
+            font-family: var(--font-family);
+            background: radial-gradient(circle at top left, var(--color-bg-gradient-start) 0%, var(--color-bg-gradient-end) 100%); 
+            color: var(--color-text-light);
+            margin: 0;
+            padding: 1rem; /* Mobile-First: Padding menor */
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
         }
-        .dashboard {
-            max-width: 1200px; width: 100%; margin: 0 auto; display: grid; gap: 2rem; grid-template-columns: repeat(12, 1fr);
-            opacity: 0; transform: translateY(20px); animation: fadeInSlideUp 0.8s ease-out forwards;
-        }
-        .card {
-            background-color: var(--color-card-bg); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--color-card-border);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); backdrop-filter: blur(var(--backdrop-blur)); -webkit-backdrop-filter: blur(var(--backdrop-blur));
-        }
-        h1, h2, h3 { margin-top: 0; font-weight: 600; }
-        h1 { font-size: 2.5rem; color: white; }
-        h2 { color: var(--color-primary); border-bottom: 1px solid var(--color-card-border); padding-bottom: 0.75rem; margin-bottom: 1rem; font-size: 1.5rem; display: flex; align-items: center;}
-        h2 i { margin-right: 10px; }
-        h3 { font-size: 1.2rem; color: var(--color-text-light); opacity: 0.8; }
-        .header { grid-column: 1 / -1; text-align: center; margin-bottom: 2rem; }
-        .cost-calculator { grid-column: 1 / -1; animation-delay: 0.2s; }
-        .heatmap { grid-column: 1 / -1; animation-delay: 0.4s; }
-        .ticket-simulator-wrapper { grid-column: 1 / -1; animation-delay: 0.6s; }
         
-        @media (min-width: 1024px) {
-            .heatmap { grid-column: 1 / 8; }
-            .ticket-simulator-wrapper { grid-column: 8 / -1; }
-            .opportunity-dashboard-content { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: center; text-align: left; }
+        /* PRIORIDADE 2: Mobile-First Layout (Padrão: 1 Coluna) */
+        .dashboard {
+            max-width: 100%;
+            width: 100%;
+            margin: 0 auto;
+            display: grid;
+            gap: 1.5rem; /* Menor gap para mobile */
+            grid-template-columns: 1fr; /* Coluna única por padrão */
+            opacity: 0; 
+            transform: translateY(20px); 
+            animation: fadeInSlideUp 0.8s ease-out forwards;
         }
-        @keyframes fadeInSlideUp { to { opacity: 1; transform: translateY(0); } }
+        
+        /* Garantindo que todos os cartões ocupem a largura total em mobile */
+        .header, .cost-calculator, .heatmap, .ticket-simulator-wrapper { 
+            grid-column: 1 / -1; 
+        }
+
+        .card {
+            background-color: var(--color-card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid var(--color-card-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(var(--backdrop-blur));
+            -webkit-backdrop-filter: blur(var(--backdrop-blur));
+        }
+        
+        h1 { font-size: 2rem; color: white; letter-spacing: 0.05em; } /* Fonte menor para mobile */
+        h2 { color: var(--color-primary); border-bottom: 1px solid var(--color-card-border); padding-bottom: 0.75rem; margin-bottom: 1rem; font-size: 1.3rem; display: flex; align-items: center;}
+        
+        /* Calculadora do Custo */
         #revenue-lost {
-            font-size: 3.5rem; color: var(--color-danger); font-weight: 800; text-align: center; margin: 1rem 0;
-            animation: pulse 1.5s infinite alternate; text-shadow: 0 0 20px var(--color-danger); line-height: 1.1;
+            font-size: 3rem; /* Menor para mobile */
+            color: var(--color-danger);
+            font-weight: 700;
+            margin: 0.5rem 0;
+            animation: pulse 1.5s infinite alternate;
+            text-shadow: 0 0 15px var(--color-danger); 
+        }
+        input[type="range"] {
+            width: 100%; margin: 1rem 0;
+        }
+
+        /* Mapa de Calor */
+        .bar { height: 40px; } /* Maior para toque */
+        
+        /* Modal SWOT */
+        .swot-modal { height: 95vh; padding: 20px; }
+        .swot-grid {
+            display: grid;
+            grid-template-columns: 1fr; /* Padrão: 1 coluna para SWOT em mobile */
+            gap: 20px;
+        }
+        .swot-quadrant h3 { font-size: 1.3rem; }
+        .swot-quadrant li { 
+            list-style: none; /* Remove bullet padrão */
+            margin-bottom: 15px; 
+            padding-left: 0;
+        }
+        /* PRIORIDADE 1: Estrutura Título + Detalhe */
+        .swot-quadrant li strong {
+            display: block;
+            font-size: 1rem;
+            color: white;
+            margin-bottom: 3px;
+        }
+        .swot-quadrant li p {
+            font-size: 0.9rem;
+            margin: 0;
+            opacity: 0.7;
+            padding-left: 5px; /* Pequeno recuo para o detalhe */
+        }
+
+        /* PRIORIDADE 1: Plano de Ação Recomendado */
+        .action-plan-banner {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 12px;
+            background-color: var(--action-plan-bg);
+            border: 1px solid var(--color-primary);
+            box-shadow: 0 5px 20px rgba(10, 132, 255, 0.2);
+        }
+        .action-plan-banner h3 {
+            font-size: 1.4rem;
+            color: white;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        .action-plan-content { display: flex; flex-direction: column; gap: 15px; }
+        .action-point { display: flex; gap: 10px; align-items: flex-start; }
+        .action-point .step-number {
+            background-color: var(--color-success);
+            color: var(--color-bg-dark);
+            font-weight: 700;
+            width: 25px; height: 25px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+            font-size: 0.9rem;
+        }
+        .action-point p { margin: 0; font-size: 1rem; }
+        
+        /* Tabela de Métricas Refinada (Fraquezas) */
+        .metric-table th, .metric-table td { padding: 10px; }
+
+
+        /* ========================================================= */
+        /* Media Queries Estratégicas (PRIORIDADE 2)                 */
+        /* ========================================================= */
+
+        /* Tablet Layout (min-width: 768px) */
+        @media (min-width: 768px) {
+            body { padding: 1.5rem; }
+            h1 { font-size: 2.2rem; }
+            h2 { font-size: 1.4rem; }
+            #revenue-lost { font-size: 4rem; }
+            
+            /* Ativação do Grid (Duas Colunas Principais) */
+            .dashboard {
+                grid-template-columns: repeat(12, 1fr);
+                gap: 2rem;
+            }
+            .cost-calculator { grid-column: 1 / -1; } /* Continua full width */
+            .heatmap { grid-column: 1 / 7; } /* 6/12 - 50% */
+            .ticket-simulator-wrapper { grid-column: 7 / -1; } /* 6/12 - 50% */
+            
+            /* SWOT Grid (2x2) */
+            .swot-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 30px;
+            }
+        }
+
+        /* Desktop Layout (min-width: 1024px) */
+        @media (min-width: 1024px) {
+            body { padding: 2rem; }
+            h1 { font-size: 2.5rem; }
+            h2 { font-size: 1.5rem; }
+            #revenue-lost { font-size: 5rem; }
+            .dashboard {
+                max-width: 1200px; /* Largura fixa no desktop */
+            }
+
+            /* Layout de Grid Completo (v4.0/v3.1) */
+            .cost-calculator { grid-column: 1 / -1; }
+            .heatmap { grid-column: 1 / 8; } /* 7/12 */
+            .ticket-simulator-wrapper { grid-column: 8 / -1; } /* 5/12 */
+        }
+
+        /* Animações (mantidas) */
+        @keyframes fadeInSlideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         @keyframes pulse {
             from { transform: scale(1); text-shadow: 0 0 20px rgba(255, 69, 58, 0.4); }
             to { transform: scale(1.03); text-shadow: 0 0 35px rgba(255, 69, 58, 0.8); }
         }
-        input[type="range"], input[type="text"] { 
-            width: 100%; padding: 0.75rem; margin: 0.5rem 0 1rem 0; background-color: rgba(68, 68, 70, 0.8);
-            border: 1px solid var(--color-card-border); border-radius: 6px; color: var(--color-text-light); box-sizing: border-box;
-        }
-        button {
-            background-color: var(--color-primary); color: white; border: none; padding: 0.75rem 1.5rem;
-            border-radius: 6px; font-weight: 600; cursor: pointer; transition: background-color 0.2s ease, transform 0.1s ease;
-            box-shadow: 0 4px 15px rgba(10, 132, 255, 0.3); width: 100%;
-        }
-        button:hover { background-color: #3d91ff; transform: translateY(-1px); }
-        button:active { transform: translateY(0); }
-        #global-solutions-button {
-            background-color: var(--color-success); box-shadow: 0 4px 15px rgba(52, 199, 89, 0.4); margin-top: 1rem;
-        }
-        #global-solutions-button:hover { background-color: #55d677; }
-        .roi-scroll-button {
-            background-color: var(--color-warning); box-shadow: 0 4px 15px rgba(255, 159, 10, 0.4);
-            margin-top: 10px; padding: 0.5rem 1rem; font-size: 0.9rem;
-        }
-        .roi-scroll-button:hover { background-color: #ffb74d; }
-        #heatmap-container { display: flex; flex-direction: column; gap: 8px; }
-        .bar {
-            height: 35px; background: linear-gradient(90deg, var(--color-primary) 0%, #0a84ff88 100%); color: white; text-align: left;
-            padding-left: 15px; line-height: 35px; border-radius: 6px; font-weight: 500; transition: all 0.3s ease;
-            display: flex; justify-content: space-between; padding-right: 15px; cursor: pointer;
-        }
-        .bar:hover { transform: scale(1.02); }
-        .bar.active-drilldown { transform: scale(1.03); border: 2px solid var(--color-success); box-shadow: 0 0 15px rgba(52, 199, 89, 0.5); }
-        .bar.faded { opacity: 0.3; }
-        .swot-modal-overlay, .global-modal-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.95);
-            display: none; align-items: center; justify-content: center; z-index: 1000; opacity: 0; transition: opacity 0.3s ease;
-        }
-        .swot-modal-overlay.open, .global-modal-overlay.open { display: flex; opacity: 1; }
-        .swot-modal, .global-modal {
-            width: 90%; max-width: 1400px; height: 90vh; background-color: var(--color-card-bg); border-radius: 15px;
-            border: 1px solid var(--color-primary); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9); padding: 30px;
-            position: relative; overflow-y: auto; backdrop-filter: blur(var(--backdrop-blur));
-        }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--color-card-border); padding-bottom: 15px; margin-bottom: 20px; }
-        .modal-header h2 { font-size: 2rem; margin: 0; border-bottom: none; padding-bottom: 0; }
-        .close-button { background: none; border: none; color: white; cursor: pointer; font-size: 1.5rem; opacity: 0.7; transition: opacity 0.2s ease; width: auto; padding: 0;}
-        .close-button:hover { opacity: 1; }
-        .swot-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        @media (min-width: 1024px) { .swot-grid { grid-template-columns: repeat(2, 1fr); } }
-        .swot-quadrant { background-color: rgba(68, 68, 70, 0.8); padding: 20px; border-radius: 10px; border: 1px solid var(--color-card-border); }
-        .swot-quadrant h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 15px; opacity: 1; display: flex; align-items: center; }
-        .swot-quadrant h3 i { margin-right: 10px; }
-        .quadrant-strengths h3 { color: var(--color-success); } .quadrant-weaknesses h3 { color: var(--color-danger); }
-        .quadrant-opportunities h3 { color: var(--color-primary); } .quadrant-threats h3 { color: var(--color-warning); }
-        .swot-item h4 { font-size: 1.1rem; margin: 1rem 0 0.5rem 0; display: flex; align-items: center; }
-        .swot-item h4 i { margin-right: 8px; color: var(--color-primary); }
-        .swot-item p { font-size: 0.95rem; opacity: 0.8; margin: 0 0 1rem 28px; border-left: 2px solid var(--color-card-border); padding-left: 15px; }
-        .swot-solution-banner { 
-            grid-column: 1 / -1; background: linear-gradient(90deg, var(--color-success) 0%, #34c75988 100%); 
-            color: white; padding: 20px; border-radius: 10px; margin-top: 20px; box-shadow: 0 0 20px rgba(52, 199, 89, 0.5);
-        }
-        .swot-solution-banner h3 { color: white; border: none; margin-bottom: 10px; }
-        .swot-solution-banner ul { padding-left: 20px; list-style-type: '⚡ '; }
-        .swot-solution-banner li { margin-bottom: 8px; font-weight: 500;}
-        .deep-dive-analytics { grid-column: 1 / -1; margin-top: 30px; border-top: 2px solid var(--color-primary); padding-top: 20px;}
-        .deep-dive-analytics h2 { color: var(--color-warning); border-bottom: 1px solid var(--color-warning); padding-bottom: 0.75rem; margin-bottom: 1.5rem; scroll-margin-top: 30px; }
-        .analytics-content { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        @media (min-width: 900px) { .analytics-content { grid-template-columns: repeat(2, 1fr); } }
-        .benchmark-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
-        .benchmark-table th, .benchmark-table td { padding: 10px 15px; text-align: left; border-bottom: 1px solid var(--color-card-border); }
-        .benchmark-table th { background-color: rgba(58, 58, 60, 0.8); font-weight: 700; color: var(--color-primary); }
-        .benchmark-table tr:hover { background-color: rgba(58, 58, 60, 0.5); }
-        .benchmark-table .danger { color: var(--color-danger); font-weight: 700; }
-        .benchmark-table .success { color: var(--color-success); font-weight: 700; }
-        .chart-container { background-color: rgba(68, 68, 70, 0.8); padding: 20px; border-radius: 10px; min-height: 300px; display: flex; flex-direction: column; }
-        .chart-container-small { height: 200px; width: 100%; max-width: 300px; margin: 0 auto 1rem auto; }
-        #global-solutions-content h3 { color: var(--color-success); border-bottom: 1px solid var(--color-card-border); padding-bottom: 0.5rem; margin-top: 2rem; }
-        #global-solutions-content .solution-category { background-color: rgba(68, 68, 70, 0.8); padding: 15px; border-radius: 8px; margin-bottom: 15px; }
-        #global-solutions-content .solution-category h4 { font-size: 1.3rem; color: var(--color-primary); margin-bottom: 10px; display: flex; align-items: center; }
-        #global-solutions-content .solution-category ul { list-style-type: '→ '; padding-left: 20px; margin: 0; }
-        #global-solutions-content .solution-category li { margin-bottom: 5px; opacity: 0.9; }
-        .ticket-list { display: flex; flex-direction: column; gap: 10px; max-height: 400px; overflow-y: auto; padding-right: 5px; }
-        .ticket-card {
-            background-color: rgba(68, 68, 70, 0.8); padding: 10px; border-radius: 8px;
-            display: flex; justify-content: space-between; align-items: center;
-            border-left: 4px solid var(--color-danger); transition: all 0.3s ease; font-size: 0.95rem;
-        }
-        .ticket-card.resolved { border-left: 4px solid var(--color-success); background-color: rgba(68, 70, 68, 0.6); opacity: 0.6; }
-        .ticket-info { flex-grow: 1; }
-        .ticket-status { display: flex; align-items: center; gap: 10px; }
-        .resolve-btn { background-color: var(--color-success); width: auto; padding: 5px 10px; font-size: 0.8rem; box-shadow: none; transition: background-color 0.2s ease; }
-        .resolve-btn:hover { background-color: #55d677; }
-        .status-badge { padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
-        .status-badge.open { background-color: var(--color-danger); }
-        .status-badge.resolved { background-color: var(--color-success); }
     </style>
 </head>
 <body>
+
     <div class="dashboard">
         <header class="header">
             <h1>Intellisense AI - Ativo de Guerra: Simulador Operacional Nacional</h1>
-            <p>Dashboard de Eficiência - A Forja da Persuasão Digital (v9.0 - A REDENÇÃO)</p>
+            <p>Dashboard de Eficiência - A Forja da Persuasão Digital (v5.0)</p>
         </header>
-        <div class="card cost-calculator">
-            <h2><i data-feather="monitor"></i> Dashboard de Oportunidade (v9.0)</h2>
-            <div class="opportunity-dashboard-content">
-                <div class="dashboard-problem">
-                    <p>Taxa de Não-Retorno de Clientes Insatisfeitos (Slider)</p>
-                    <input type="range" id="non-return-rate" min="1" max="50" value="15" step="1">
-                    <p>Taxa Estimada de Não-Retorno: <span id="rate-display">15</span>%</p>
-                    <h3><span id="category-loss-text">Receita Anual Total Perdida:</span></h3>
-                    <div id="revenue-lost">R$ 0,00</div>
-                    <small>*Base de cálculo: Faturamento Anual de R$ 3.500.000.</small>
-                </div>
-                <div class="dashboard-opportunity">
-                    <h3>Fontes da Ineficiência: Onde está a Perda?</h3>
-                    <div class="chart-container-small">
-                        <canvas id="doughnut-chart"></canvas>
-                    </div>
-                    <button id="global-solutions-button">Ver Plano de Ação Completo (OVERLORD)</button>
-                </div>
-            </div>
+
+        <div class="card cost-calculator" id="cost-calculator-card">
+            <h2><i data-feather="dollar-sign"></i> Calculadora do Custo da Ineficiência</h2>
+            <p>Taxa de Não-Retorno de Clientes Insatisfeitos (Slider - Fácil de usar com Touch)</p>
+            <input type="range" id="non-return-rate" min="1" max="50" value="15" step="1">
+            <p>Taxa Estimada de Não-Retorno: <span id="rate-display">15</span>%</p>
+            <h3>Receita Anual Perdida: <span id="category-loss-text" style="font-size: 0.7em; opacity: 0.7;">Perda total estimada:</span></h3>
+            <div id="revenue-lost">R$ 525.000</div>
+            <small>*Ticket Médio Anual Definido: R$ 3.500.000 (Base de 10.000 hóspedes).</small>
         </div>
-        <div class="card heatmap">
+
+        <div class="card heatmap" id="heatmap-card">
             <h2><i data-feather="activity"></i> Mapa de Calor de Falhas (Argos Data)</h2>
-            <p>Análise de 500 avaliações negativas - Áreas de Maior Severidade</p>
+            <p>Análise de 500 avaliações negativas - Clique para Análise SWOT Profissional</p>
             <div id="heatmap-container">
-                <div class="bar" data-category="Check-in"><span class="bar-label">Check-in</span><span class="bar-value">(35%)</span></div>
-                <div class="bar" data-category="Piscina/Área Externa"><span class="bar-label">Piscina/Área Externa</span><span class="bar-value">(25%)</span></div>
-                <div class="bar" data-category="Serviço de Quarto"><span class="bar-label">Serviço de Quarto</span><span class="bar-value">(20%)</span></div>
-                <div class="bar" data-category="Manutenção"><span class="bar-label">Manutenção</span><span class="bar-value">(15%)</span></div>
-                <div class="bar" data-category="A&B"><span class="bar-label">A&B</span><span class="bar-value">(5%)</span></div>
+                <div class="bar" data-category="Check-in" data-severity="85" title="Exemplo: 'Check-in de 1 hora. Inaceitável.'">
+                    <span class="bar-label">Check-in</span> <span class="bar-value">(85%)</span>
+                </div>
+                <div class="bar" data-category="Piscina/Área Externa" data-severity="70" title="Exemplo: 'Toalhas sujas e piscina lotada, sem controle.'">
+                    <span class="bar-label">Piscina/Área Externa</span> <span class="bar-value">(70%)</span>
+                </div>
+                <div class="bar" data-category="Serviço de Quarto" data-severity="55" title="Exemplo: 'Serviço de quarto demorou 45 minutos para um café.'">
+                    <span class="bar-label">Serviço de Quarto</span> <span class="bar-value">(55%)</span>
+                </div>
+                <div class="bar" data-category="Manutenção" data-severity="40" title="Exemplo: 'Ar-condicionado quebrado, tive que ligar 3 vezes.'">
+                    <span class="bar-label">Manutenção</span> <span class="bar-value">(40%)</span>
+                </div>
+                <div class="bar" data-category="A&B" data-severity="20" title="Exemplo: 'Bar na cobertura caro e garçom confuso.'">
+                    <span class="bar-label">A&B</span> <span class="bar-value">(20%)</span>
+                </div>
             </div>
-            <small>**Clique em uma barra ou fatia da pizza para Análise SWOT aprofundada**.</small>
         </div>
-        <div class="card ticket-simulator-wrapper">
-            <h2><i data-feather="tag"></i> Simulador de Tickets Inteligentes</h2>
+
+        <div class="card ticket-simulator-wrapper" id="ticket-simulator-card">
+            <h2 id="ticket-simulator-title"><i data-feather="tag"></i> Simulador de Tickets Inteligentes</h2>
             <div class="guest-view">
-                <h3>Visão do Hóspede - Abrir Ticket</h3>
-                <input type="text" id="problem-input" placeholder="Ex: 'Ar-condicionado não gela, quarto 302.'">
+                <h3>Visão do Hóspede</h3>
+                <p>Simulador: App de Reporte Rápido</p>
+                <input type="text" id="problem-input" placeholder="Qual o problema? Ex: 'Ar-condicionado não gela.'">
                 <button id="report-button">🚨 Reportar Problema</button>
             </div>
             <hr style="border-color: var(--color-card-border); margin: 1.5rem 0;">
             <div class="manager-view">
-                <h3>Visão do Gerente - Tickets Abertos em Tempo Real</h3>
-                <div id="ticket-list" class="ticket-list">
-                    <p style="text-align: center; opacity: 0.5;">Carregando tickets...</p>
-                </div>
+                <h3>Visão do Gerente</h3>
+                <p>Tickets Abertos (Onde o tempo está correndo)</p>
+                <div id="ticket-list"></div>
             </div>
         </div>
     </div>
+
+    <!-- Modal de Análise SWOT (Responsivo) -->
     <div class="swot-modal-overlay" id="swot-modal-overlay">
         <div class="swot-modal" id="swot-modal">
-            <div class="modal-header">
-                <h2 id="swot-title"></h2>
+            <div class="swot-header">
+                <h2 id="swot-title">Análise SWOT Detalhada</h2>
                 <button class="close-button" id="close-swot-modal"><i data-feather="x"></i></button>
             </div>
-            <div class="swot-grid" id="swot-grid-content"></div>
-            <div class="deep-dive-analytics">
-                <h2 id="deep-dive-title"><i data-feather="database"></i> Deep Dive Analytics (Custo/Benefício)</h2>
-                <div class="analytics-content">
-                    <div id="benchmark-module"></div>
-                    <div id="roi-module" class="chart-container">
-                        <canvas id="roi-chart"></canvas>
+            <div id="swot-content-wrapper">
+                <!-- Conteúdo SWOT e Plano de Ação injetados via JS -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        feather.replace();
+
+        // Variáveis Globais
+        let ticketIdCounter = 1;
+        const BASE_ANNUAL_REVENUE = 3500000;
+        const intervalId = setInterval(updateTimers, 1000);
+        let activeCategory = null; 
+        
+        // =========================================================
+        // PRIORIDADE 1: DADOS SWOT ROBUSTOS E QUANTIFICADOS (v5.0)
+        // =========================================================
+        const SWOTData = {
+            "Check-in": {
+                severity: 85, impact: 0.35,
+                ActionPlan: [
+                    "Implementação do Módulo de Pré-Check-in Digital, reduzindo o tempo de espera em 90%.",
+                    "Treinamento de 'Concierges de Boas-Vindas' (liberados pelo sistema) para elevar o NPS inicial em +10 pontos.",
+                    "Integração do Módulo de Upsell na etapa de pré-check-in, visando aumentar a receita por hóspede em 10%."
+                ],
+                SWOT: {
+                    strengths: [
+                        { title: "Localização Icônica e Premium", detail: "Situado em frente à praia de Copacabana, este ativo atrai um público de alto poder aquisitivo. Métrica: 95% de aprovação na métrica 'Localização'." },
+                        { title: "Marca com Forte Apelo Histórico", detail: "O legado da marca assegura uma base fiel de clientes. Métrica: 80% de ocupação recorrente (crescimento de 5% A/A)." },
+                    ],
+                    weaknesses: [
+                        { metric: "Tempo Médio de Espera", value: "35 min", impact: "Este tempo de espera é 70% maior que a média de hotéis de luxo concorrentes, causando uma quebra imediata na percepção de exclusividade e gerando um pico de reclamações antes mesmo do hóspede chegar ao quarto." },
+                        { metric: "Taxa de Reclamação no 1º Contato", value: "35%", impact: "O alto volume de problemas iniciais exige mais recursos da equipe (40 horas/semana) e desvia o foco de tarefas de valor (ex: concierge)." },
+                        { metric: "Falhas de Sistema", value: "12%", impact: "Lentidão ou falhas no PMS durante o horário de pico prolongam a espera em até 10 minutos por cliente, impactando negativamente 2 em cada 10 hóspedes." }
+                    ],
+                    opportunities: [
+                        { title: "Implementar Pré-Check-in via App", detail: "Potencial de redução de 90% no tempo de espera, resultando em um aumento projetado de 15% na pontuação de 'Satisfação na Chegada' e liberando 25 horas/semana da equipe da recepção para focar em tarefas de maior valor." },
+                        { title: "Upsells Personalizados na Chegada", detail: "Usar dados do hóspede para oferecer upgrades de quarto ou serviços premium, com uma taxa de conversão projetada de 8% e retorno sobre investimento (ROI) de 150% no primeiro ano." },
+                    ],
+                    threats: [
+                        { title: "Perda de Clientes de Primeira Viagem", detail: "Estimativa de perda de 25% dos clientes que tiveram uma má impressão inicial, representando uma receita anual perdida de R$ 875.000,00." },
+                        { title: "Posicionamento da Concorrência", detail: "Concorrentes (ex: Fairmont, Copacabana Palace) já utilizam tecnologia para agilizar o check-in, criando um desnível inaceitável no mercado de luxo e risco de migração de 10% do público-alvo." },
+                    ]
+                }
+            },
+            "Piscina/Área Externa": {
+                severity: 70, impact: 0.25,
+                ActionPlan: [
+                    "Implementação do Módulo de Ocupação em Tempo Real para controle de acesso.",
+                    "Otimização da equipe de limpeza e serviço por demanda (Argos-Tasking).",
+                    "Criação de áreas VVIP controladas por acesso, gerando uma nova linha de receita de 5% A/A."
+                ],
+                SWOT: {
+                    strengths: [
+                        { title: "Design Paisagístico e Vista Deslumbrante", detail: "O principal atrativo visual do hotel, gerando mais de 60% do engajamento em mídias sociais (excluindo o lobby)." },
+                        { title: "Amplo Espaço de Lazer", detail: "Área de 500m² capaz de acomodar confortavelmente 150 pessoas, oferecendo espaço para eventos exclusivos." }
+                    ],
+                    weaknesses: [
+                        { metric: "Taxa de Ocupação Crítica", value: "70%", impact: "Atingida em 70% dos finais de semana, levando à percepção de superlotação e quebra da experiência de luxo." },
+                        { metric: "Tempo de Limpeza/Reposição", value: "Alto", impact: "A demora na reposição de toalhas e limpeza de mesas gera 40% das reclamações na área externa após as 14h." }
+                    ],
+                    opportunities: [
+                        { title: "Monitoramento de Ocupação em Tempo Real (IA)", detail: "Permite à gestão de acesso prever e mitigar a superlotação com 30 minutos de antecedência, melhorando a experiência do hóspede e a segurança." },
+                        { title: "Revenue Management em Lazer", detail: "Vender 'Day Use Premium' em horários de baixa ocupação, com potencial de aumentar a receita em R$ 10.000 por semana." }
+                    ],
+                    threats: [
+                        { title: "Perda de Exclusividade e Luxo", detail: "Comentários em mídias sociais sobre 'piscina lotada' desvalorizam a marca, com risco de queda de 20% nas reservas diretas." },
+                        { title: "Normas Sanitárias Rigorosas", detail: "O risco de multas sanitárias ou fechamento parcial por descumprimento de normas é alto devido à falha na gestão manual de recursos." }
+                    ]
+                }
+            },
+            "Serviço de Quarto": { 
+                severity: 55, impact: 0.20, 
+                ActionPlan: [
+                    "Implementação de Pedidos via QR Code/App, eliminando erros de transcrição e comunicação (18% de redução de erros).",
+                    "Sistema de 'Dispatch Inteligente' que roteia o pedido para o funcionário mais próximo/disponível.",
+                    "Upselling automatizado na plataforma de pedido, visando +15% no valor médio do ticket."
+                ],
+                SWOT: { 
+                    strengths: [
+                        { title: "Potencial de Alta Margem de Lucro", detail: "O serviço de quarto é uma fonte de receita controlada, com potencial de margem líquida de 50% se a eficiência for otimizada." },
+                        { title: "Conveniência Exclusiva para o Hóspede", detail: "É um ponto de contato direto e de conveniência, essencial para a percepção de um serviço 5 estrelas." }
+                    ], 
+                    weaknesses: [
+                        { metric: "Tempo Médio de Entrega", value: "48 min", impact: "A demora de quase uma hora (pico) resulta em 75% dos pedidos chegando frios ou com qualidade comprometida. Padrão de luxo: 20 min." },
+                        { metric: "Taxa de Erro no Pedido", value: "18%", impact: "O alto índice de erros (cód.: 'Pedido Errado') custa ao hotel R$ 5.000/mês em custos de refação e vouchers de desculpa." },
+                        { metric: "Dificuldade de Contato", value: "15%", impact: "A linha telefônica fica ocupada em 15% das tentativas, forçando o hóspede a tentar novamente ou desistir (perda de receita)." }
+                    ], 
+                    opportunities: [
+                        { title: "Pedidos via QR Code/App", detail: "A eliminação de erros de comunicação e gargalos telefônicos pode reduzir o tempo de entrega em 40% e a taxa de erro em 80%." },
+                        { title: "Upselling Automatizado (Argos)", detail: "Sugestões de harmonização de bebidas ou acompanhamentos no momento do pedido, com base no perfil do hóspede, aumenta o ticket médio em 15%." }
+                    ], 
+                    threats: [
+                        { title: "Concorrência de Apps de Delivery", detail: "O hóspede moderno compara o serviço de quarto com apps de delivery (iFood, Rappi), que são 2x mais rápidos e eficientes, levando a uma perda de 30% de potencial receita." },
+                        { title: "Reputação por Serviço Lento", detail: "Frustração do hóspede gerando avaliações negativas que citam 'serviço lento', impactando o ranking em plataformas de viagens." }
+                    ] 
+                } 
+            },
+            "Manutenção": { 
+                severity: 40, impact: 0.15, 
+                ActionPlan: [
+                    "Sistema de 'Tickets Inteligentes' (com foto) via App para diagnóstico imediato e roteamento.",
+                    "Gerência de Acompanhamento em Tempo Real (KPIs de tempo de resposta e resolução) com alertas preditivos.",
+                    "Redução do Tempo Médio de Resolução (MTTR) em 75% no primeiro trimestre de implementação."
+                ], 
+                SWOT: { 
+                    strengths: [
+                        { title: "Equipe Interna Qualificada", detail: "Membros da equipe possuem 8+ anos de experiência na estrutura específica do prédio, garantindo conhecimento profundo dos sistemas internos." }
+                    ], 
+                    weaknesses: [
+                        { metric: "Tempo Médio de Resolução (MTTR)", value: "3h 15min", impact: "Este tempo é inaceitável para o padrão de luxo (deveria ser < 60min) e exige a mudança de quarto em 15% dos casos, elevando custos operacionais." },
+                        { metric: "Taxa de Reincidência", value: "22%", impact: "Problemas recorrentes indicam falta de peças ou diagnóstico superficial, elevando os custos de mão de obra em 15% e a insatisfação do hóspede." }
+                    ], 
+                    opportunities: [
+                        { title: "Diagnóstico Imediato via App (Foto)", detail: "Permite que a manutenção prepare a ferramenta e peça antes de ir ao quarto, reduzindo o tempo de resolução em 50% e a falha na primeira visita em 90%." },
+                        { title: "Manutenção Preditiva (IoT)", detail: "Uso de sensores para monitorar sistemas críticos (HVAC, hidráulica) e prever falhas antes que o hóspede as note, eliminando 80% das reclamações reativas." }
+                    ], 
+                    threats: [
+                        { title: "Destruição da Percepção de Luxo", detail: "Problemas de manutenção (ar, chuveiro) são citados em 90% das avaliações que atribuem 1 estrela, desvalorizando o preço da diária." },
+                        { title: "Risco de Acidentes e Falhas Estruturais", detail: "A falta de um sistema preditivo aumenta o risco de falhas maiores e não planejadas, que podem custar até R$ 50.000 em reparos emergenciais." }
+                    ] 
+                } 
+            },
+            "A&B": { 
+                severity: 20, impact: 0.05, 
+                ActionPlan: [
+                    "Sistema de Reservas Inteligente integrado ao perfil do hóspede para ofertas personalizadas.",
+                    "Análise de dados de consumo para otimizar o cardápio e reduzir 10% do desperdício.",
+                    "Lançamento de um Programa de Fidelidade Digital para o bar da cobertura, aumentando a recorrência de clientes externos."
+                ], 
+                SWOT: { 
+                    strengths: [
+                        { title: "Localização Privilegiada", detail: "Potencial para bares e restaurantes icônicos com vista para o mar, atraindo não-hóspedes e aumentando o faturamento." },
+                        { title: "Público Cativo de Alto Poder Aquisitivo", detail: "Hóspedes com alta capacidade de consumo no local, desde que o valor percebido esteja alinhado." }
+                    ], 
+                    weaknesses: [
+                        { metric: "Ocupação Média (Hóspedes)", value: "25%", impact: "Baixo aproveitamento da receita, indicando que 75% dos hóspedes preferem jantar fora do hotel." },
+                        { metric: "Reclamações 'Preço Injusto'", value: "40%", impact: "O alto índice de reclamações de preço sugere um desalinhamento entre a expectativa de valor e a entrega de qualidade/serviço." }
+                    ], 
+                    opportunities: [
+                        { title: "Análise de Sentimento do Cardápio", detail: "Analisar menções e avaliações para otimizar o cardápio, priorizando pratos com margem alta e satisfação garantida (aumento de 10% no lucro)." },
+                        { title: "Programa de Fidelidade Digital", detail: "Transformar visitantes externos em clientes recorrentes, com potencial de aumentar o tráfego em 20% fora dos horários de pico." }
+                    ], 
+                    threats: [
+                        { title: "Vasta Concorrência Externa", detail: "A Zona Sul do Rio possui inúmeros restaurantes e bares de alta qualidade, forçando o hotel a competir com preço ou experiência." },
+                        { title: "Baixa Visibilidade Online", detail: "A baixa taxa de reservas via sistemas online (apenas 5%) indica que os restaurantes e bares não estão otimizados digitalmente." }
+                    ] 
+                } 
+            },
+        };
+
+        // --- Elementos DOM ---
+        const rateSlider = document.getElementById('non-return-rate');
+        const rateDisplay = document.getElementById('rate-display');
+        const revenueLostDisplay = document.getElementById('revenue-lost');
+        const categoryLossText = document.getElementById('category-loss-text');
+        const reportButton = document.getElementById('report-button');
+        const problemInput = document.getElementById('problem-input');
+        const ticketList = document.getElementById('ticket-list');
+        const heatmapBars = document.querySelectorAll('.bar');
+        const swotModalOverlay = document.getElementById('swot-modal-overlay');
+        const swotTitle = document.getElementById('swot-title');
+        const swotContentWrapper = document.getElementById('swot-content-wrapper');
+        const closeSwotModalButton = document.getElementById('close-swot-modal');
+
+        let tickets = [];
+
+        // --- Lógica de Custo (Mantida) ---
+        function updateRevenueLost() {
+            const baseRate = parseInt(rateSlider.value) / 100;
+            rateDisplay.textContent = rateSlider.value;
+            let totalLoss = BASE_ANNUAL_REVENUE * baseRate;
+            let currentLossText = "Perda total estimada:";
+
+            if (activeCategory && SWOTData[activeCategory]) {
+                // A perda total (baseada na taxa de não-retorno) é modulada pelo impacto da categoria
+                totalLoss = totalLoss * SWOTData[activeCategory].impact;
+                currentLossText = `Perda estimada por falhas em "${activeCategory}":`;
+            }
+            
+            revenueLostDisplay.textContent = 'R$ ' + Math.round(totalLoss).toLocaleString('pt-BR', { minimumFractionDigits: 0 });
+            categoryLossText.textContent = currentLossText;
+        }
+
+        rateSlider.addEventListener('input', updateRevenueLost);
+        
+        // --- Lógica do Modal SWOT (ATUALIZADA v5.0) ---
+        heatmapBars.forEach(bar => {
+            // Garante que o clique funcione perfeitamente em telas touch
+            bar.addEventListener('click', (event) => {
+                event.stopPropagation(); // Evita fechar o modal se o clique for propagado
+                const category = bar.dataset.category;
+                
+                // Se clicar na mesma barra, desativa o filtro/fecha o modal
+                if (activeCategory === category && swotModalOverlay.classList.contains('open')) {
+                    closeSWOTModal();
+                    return;
+                }
+
+                activeCategory = category;
+                
+                heatmapBars.forEach(b => b.classList.add('faded'));
+                bar.classList.remove('faded');
+                bar.classList.add('active-drilldown');
+
+                updateRevenueLost(); // Recalcula a perda com o filtro
+                renderSWOTModal(category);
+            });
+        });
+
+        closeSwotModalButton.addEventListener('click', closeSWOTModal);
+        swotModalOverlay.addEventListener('click', (event) => {
+            if (event.target === swotModalOverlay) {
+                closeSWOTModal();
+            }
+        });
+
+        function closeSWOTModal() {
+            swotModalOverlay.classList.remove('open');
+            heatmapBars.forEach(b => {
+                b.classList.remove('active-drilldown', 'faded');
+            });
+            activeCategory = null;
+            updateRevenueLost(); // Volta ao cálculo total
+        }
+
+        function renderSWOTModal(category) {
+            const data = SWOTData[category];
+            if (!data) return;
+
+            swotTitle.innerHTML = `<i data-feather="monitor"></i> Análise SWOT: ${category}`;
+
+            // Função de renderização para Forças, Oportunidades e Ameaças (Título + Detalhe)
+            const renderStructuredList = (items) => items.map(item => `
+                <li>
+                    <strong>${item.title}</strong>
+                    <p>${item.detail}</p>
+                </li>
+            `).join('');
+
+            const strengths = renderStructuredList(data.SWOT.strengths);
+            const opportunities = renderStructuredList(data.SWOT.opportunities);
+            const threats = renderStructuredList(data.SWOT.threats);
+            
+            // Renderização da Tabela de Fraquezas (Métrica)
+            const weaknessesTable = data.SWOT.weaknesses.map(w => 
+                `<tr><td>${w.metric}</td><td>${w.value}</td><td>${w.impact}</td></tr>`
+            ).join('');
+            
+            // Renderização do Plano de Ação (Quinto Elemento Distinto)
+            const actionPlanHtml = data.ActionPlan.map((p, index) => `
+                <div class="action-point">
+                    <span class="step-number">${index + 1}</span>
+                    <p>${p}</p>
+                </div>
+            `).join('');
+
+            // Estrutura principal do modal
+            const html = `
+                <div class="swot-grid">
+                    <div class="swot-quadrant quadrant-strengths">
+                        <h3><i data-feather="thumbs-up"></i> Forças (Strengths)</h3>
+                        <ul>${strengths}</ul>
+                    </div>
+                    <div class="swot-quadrant quadrant-weaknesses">
+                        <h3><i data-feather="alert-triangle"></i> Fraquezas (Weaknesses)</h3>
+                        <table class="metric-table">
+                            <thead><tr><th>Métrica</th><th>Valor</th><th>Detalhe/Impacto</th></tr></thead>
+                            <tbody>${weaknessesTable}</tbody>
+                        </table>
+                    </div>
+                    <div class="swot-quadrant quadrant-opportunities">
+                        <h3><i data-feather="trending-up"></i> Oportunidades (Opportunities)</h3>
+                        <ul>${opportunities}</ul>
+                    </div>
+                    <div class="swot-quadrant quadrant-threats">
+                        <h3><i data-feather="shield"></i> Ameaças (Threats)</h3>
+                        <ul>${threats}</ul>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
-    <div class="global-modal-overlay" id="global-modal-overlay">
-        <div class="global-modal" id="global-modal">
-            <div class="modal-header">
-                <h2><i data-feather="terminal"></i> Plano de Ação Completo (OVERLORD)</h2>
-                <button class="close-button" id="close-global-modal"><i data-feather="x"></i></button>
-            </div>
-            <div id="global-solutions-content"></div>
-        </div>
-    </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- CONFIGURAÇÃO GLOBAL ---
-            Chart.defaults.color = 'var(--color-text-light)';
-            Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
+                <!-- NOVO: PLANO DE AÇÃO RECOMENDADO -->
+                <div class="action-plan-banner">
+                    <h3><i data-feather="terminal"></i> PLANO DE AÇÃO RECOMENDADO (Intellisense AI)</h3>
+                    <div class="action-plan-content">
+                        ${actionPlanHtml}
+                    </div>
+                </div>
+            `;
 
-            // --- DADOS ESTRATÉGICOS ---
-            const SWOTData = {
-                "Check-in": { impact: 0.35, SWOT: { strengths: [{title: "Marca com Apelo Histórico", detail:"A reputação do Hotel Nacional como um ícone arquitetônico atrai um público disposto a pagar mais pela experiência."}], weaknesses: [{title: "Tempo Médio de Espera Elevado (35 min)", detail:"Este tempo é 70% maior que a média de hotéis de luxo concorrentes, causando uma quebra imediata na percepção de exclusividade."}], opportunities: [{title: "Implementar Pré-Check-in via App", detail:"Potencial de redução de 90% no tempo de espera, resultando em um aumento projetado de 15% na pontuação de 'Satisfação na Chegada'."}], threats: [{title: "Perda de Clientes de Primeira Viagem", detail:"Nossa análise estima que 25% dos hóspedes que enfrentam um check-in ruim não retornam, representando um risco direto à receita recorrente."}] }, deepDive: { benchmark: [ { metric: "Tempo Médio de Check-in", nacional: "35 min", benchmark: "5 min" }, { metric: "Taxa de Upsell na Chegada", nacional: "2%", benchmark: "15%" } ], roi: { title: "Projeção de ROI para Otimização do Check-in", gain: 120000, cost: 80000 } }, solution: [ "Implementar Módulo de Pré-Check-in e Upsell para reduzir o tempo de espera em 90% e aumentar a receita por hóspede.", "Integrar sistema com fechaduras digitais para permitir acesso via QR Code, eliminando filas." ] },
-                "Piscina/Área Externa": { impact: 0.25, SWOT: { strengths: [{title: "Design de Alto Padrão", detail: "Área de lazer com arquitetura premiada."}, {title: "Vista Privilegiada", detail: "Localização única com vista panorâmica."}], weaknesses: [{title: "Superlotação", detail: "Falta de controle de acesso e lotação em horários de pico."}, {title: "Serviço Lento", detail: "Demora na entrega de pedidos e reposição de toalhas."}], opportunities: [{title: "Controle de Fluxo IA", detail: "Usar IA para gerenciar o acesso e evitar superlotação."}, {title: "Serviço Remoto", detail: "Implementar pedidos de bar via app de forma coordenada."}], threats: [{title: "Redes Sociais", detail: "Fotos de áreas superlotadas prejudicam a imagem da marca."}, {title: "Custos Operacionais", detail: "A má gestão de toalhas e suprimentos eleva o custo."}] }, deepDive: { benchmark: [ { metric: "Tempo de Espera por Serviço", nacional: "15 min", benchmark: "5 min" }, { metric: "Avaliação de Lotação (Score 1-5)", nacional: "2.1", benchmark: "4.8" } ], roi: { title: "Projeção de ROI para Gerenciamento de Fluxo na Piscina", gain: 50000, cost: 45000 } }, solution: [ "Instalar sensores de IA para monitorar a ocupação em tempo real e alertar a gerência sobre superlotação.", "Implementar sistema de 'Tickets Inteligentes' para a equipe de limpeza e bar, otimizando a reposição de toalhas e o serviço." ] },
-                "Serviço de Quarto": { impact: 0.20, SWOT: { strengths: [{title: "Cardápio de Qualidade", detail: "Alta qualidade dos ingredientes."}, {title: "Disponibilidade 24h", detail: "O serviço funciona sem interrupções."}], weaknesses: [{title: "Erros de Pedido", detail: "Comunicação manual gera alta taxa de erro (18%)."}, {title: "Logística Ineficiente", detail: "O tempo de entrega é demorado devido à falta de coordenação."}], opportunities: [{title: "Digitalização do Cardápio", detail: "Pedidos via QR Code reduzem erros."}, {title: "Otimização de Rotas", detail: "Usar IA para roteirizar a entrega dos pedidos."}], threats: [{title: "Reclamações na Entrega", detail: "Principal motivo para notas baixas no checkout."}, {title: "Perda de Alimentos", detail: "Pedidos errados ou atrasados resultam em desperdício."}] }, deepDive: { benchmark: [ { metric: "Tempo Médio de Entrega", nacional: "48 min", benchmark: "20 min" }, { metric: "Taxa de Erro nos Pedidos", nacional: "18%", benchmark: "< 3%" } ], roi: { title: "Projeção de ROI para Otimização do Serviço de Quarto", gain: 95000, cost: 70000 } }, solution: [ "Lançar cardápio digital via QR Code para eliminar erros de comunicação e reduzir o tempo de pedido em 80%.", "Implementar sistema de 'dispatch' inteligente que notifica o funcionário mais próximo quando o pedido está pronto." ] },
-                "Manutenção": { impact: 0.15, SWOT: { strengths: [{title: "Equipe Técnica Experiente", detail: "Os técnicos são qualificados."}, {title: "Ferramental Completo", detail: "Dispõe de todas as ferramentas necessárias."}], weaknesses: [{title: "Reatividade", detail: "Só atua após a falha, sem prevenção (3h de tempo médio de resolução)."}, {title: "Comunicação Ruim", detail: "Demora na abertura do ticket e na resposta ao hóspede."}], opportunities: [{title: "Manutenção Preditiva (IoT)", detail: "Monitorar equipamentos antes da quebra."}, {title: "Sistema de Tickets Unificado", detail: "Centralizar todas as solicitações de reparo."}], threats: [{title: "Aumento de Custos", detail: "Falhas inesperadas causam reparos caros e emergenciais."}, {title: "Indisponibilidade de Quartos", detail: "Quartos inativos por reparos longos geram perda de receita."}] }, deepDive: { benchmark: [ { metric: "Tempo Médio de Resolução", nacional: "3h 15min", benchmark: "45 min" }, { metric: "Reclamações de Falha no Quarto (Média)", nacional: "4.5/mês", benchmark: "1/mês" } ], roi: { title: "Projeção de ROI para Manutenção Preditiva", gain: 75000, cost: 60000 } }, solution: [ "Implementar o Sistema de Tickets Inteligentes para reduzir o tempo de resolução da Manutenção em 75%.", "Adotar a Manutenção Preditiva (IoT) para identificar falhas em ar-condicionado e hidráulica antes da reclamação do hóspede." ] },
-                "A&B": { impact: 0.05, SWOT: { strengths: [{title: "Cozinha Premiada", detail: "Chef renomado e alta gastronomia."}, {title: "Ambiente Agradável", detail: "Decoração moderna e confortável."}], weaknesses: [{title: "Baixa Ocupação", detail: "Apenas 25% de ocupação média, abaixo do ideal."}, {title: "Desperdício Alto", detail: "12% de custo com descarte de alimentos."}], opportunities: [{title: "Análise de Cardápio IA", detail: "Otimizar o menu para rentabilidade."}, {title: "Promoções Personalizadas", detail: "Oferecer vouchers baseados no perfil do hóspede."}], threats: [{title: "Concorrência Externa", detail: "Restaurantes locais atraem clientes do hotel."}, {title: "Prejuízo Financeiro", detail: "Desperdício e baixa ocupação corroem a margem de lucro."}] }, deepDive: { benchmark: [ { metric: "Ocupação Média do Restaurante", nacional: "25%", benchmark: "70%" }, { metric: "Desperdício Alimentar (% do Custo)", nacional: "12%", benchmark: "4%" } ], roi: { title: "Projeção de ROI para Otimização de A&B (Cardápio)", gain: 40000, cost: 30000 } }, solution: [ "Utilizar Análise de Dados para otimizar o cardápio, eliminando pratos de baixo consumo e alta complexidade/custo.", "Criar ofertas personalizadas (com base no histórico de check-in) para atrair hóspedes ao restaurante, aumentando a ocupação para 50%." ]
+            swotContentWrapper.innerHTML = html;
+            swotModalOverlay.classList.add('open');
+            feather.replace(); 
+        }
+
+        // --- LÓGICA DO SIMULADOR DE TICKETS (Mantida) ---
+        reportButton.addEventListener('click', () => {
+            const problemText = problemInput.value.trim();
+            if (problemText === '') return;
+
+            const newTicket = {
+                id: `IS-2025${String(ticketIdCounter++).padStart(4, '0')}`,
+                problem: problemText,
+                status: 'ABERTO',
+                startTime: Date.now(),
+                elapsedTime: 0
+            };
+
+            tickets.unshift(newTicket);
+            renderTicket(newTicket);
+            problemInput.value = '';
+        });
+
+        function renderTicket(ticket) {
+            const ticketCard = document.createElement('div');
+            ticketCard.className = 'ticket-card';
+            ticketCard.dataset.ticketId = ticket.id;
+            
+            ticketCard.innerHTML = `
+                <strong>ID: ${ticket.id}</strong><br>
+                Problema: ${ticket.problem}<br>
+                Status: <span class="status-open">${ticket.status}</span> | Tempo de Resposta: <span class="timer" data-id="${ticket.id}">00:00</span>
+                <button class="action-button" data-id="${ticket.id}">Solução Inteligente (IA)</button>
+            `;
+            
+            // Adiciona o novo ticket no topo da lista
+            ticketList.prepend(ticketCard); 
+        }
+
+        ticketList.addEventListener('click', (event) => {
+            if (event.target.classList.contains('action-button')) {
+                const ticketId = event.target.dataset.id;
+                const ticket = tickets.find(t => t.id === ticketId);
+                const cardElement = document.querySelector(`.ticket-card[data-ticket-id="${ticketId}"]`);
+                
+                if (ticket && cardElement && ticket.status === 'ABERTO') {
+                    const elapsed = Math.floor((Date.now() - ticket.startTime) / 1000);
+                    ticket.elapsedTime = elapsed;
+                    ticket.status = 'RESOLVIDO (IA)';
+                    
+                    const timerSpan = cardElement.querySelector('.timer');
+                    const statusSpan = cardElement.querySelector('.status-open') || cardElement.querySelector('.status-solved');
+
+                    if (statusSpan) {
+                        statusSpan.textContent = ticket.status;
+                        statusSpan.className = 'status-solved';
+                    }
+                    if (timerSpan) {
+                        timerSpan.parentElement.style.borderLeftColor = 'var(--color-success)'; 
+                    }
+
+                    event.target.remove();
+                    
+                    const solutionNote = document.createElement('div');
+                    solutionNote.className = 'ia-solution';
+                    
+                    let solutionMsg = "Recomendação de Ação Imediata (Argos): Enviar equipe para o setor de Check-in para reduzir a fila.";
+                    if (ticket.problem.toLowerCase().includes('ar-condicionado') || ticket.problem.toLowerCase().includes('vazamento')) {
+                         solutionMsg = "Recomendação de Ação Imediata (Argos): Enviar Manutenção (Tipo: HVAC/Hidráulica) para o quarto. Alarme de falha proativa acionado.";
+                    }
+                    
+                    solutionNote.innerHTML = `<strong>Resposta Argos (T=${String(Math.floor(elapsed)).padStart(2, '0')}s):</strong> ${solutionMsg}`;
+                    cardElement.appendChild(solutionNote);
+                }
+            }
+        });
+
+
+        function updateTimers() {
+            const timers = document.querySelectorAll('.timer');
+            timers.forEach(timerElement => {
+                const ticketId = timerElement.dataset.id;
+                const ticket = tickets.find(t => t.id === ticketId);
+                if (ticket && ticket.status === 'ABERTO') {
+                    const elapsed = Math.floor((Date.now() - ticket.startTime) / 1000);
+                    const minutes = String(Math.floor(elapsed / 60)).padStart(2, '0');
+                    const seconds = String(elapsed % 60).padStart(2, '0');
+                    timerElement.textContent = `${minutes}:${seconds}`;
+                    
+                    // Alerta visual de atraso (acima de 2 minutos)
+                    if (elapsed > 120) {
+                        timerElement.style.color = '#ffcc00'; 
+                        timerElement.parentElement.style.borderLeftColor = '#ffcc00';
+                    }
+                }
+            });
+        }
+        
+        // --- INICIALIZAÇÃO ---
+        document.addEventListener('DOMContentLoaded', () => {
+            updateRevenueLost(); 
+        });
+    </script>
+</body>
+</html>
