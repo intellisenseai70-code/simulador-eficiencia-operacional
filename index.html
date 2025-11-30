@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Intellisense AI - Ativo de Guerra: Simulador Operacional Nacional (v7.0 - OVERLORD)</title>
+    <title>Intellisense AI - Ativo de Guerra: Simulador Operacional Nacional (v7.1 - CERBERUS)</title>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
     <!-- Adicionando Chart.js para o Gráfico de Projeção de ROI e Doughnut Chart -->
@@ -37,8 +37,8 @@
         h3 { font-size: 1.2rem; color: var(--color-text-light); opacity: 0.8; }
         .header { grid-column: 1 / -1; text-align: center; margin-bottom: 2rem; }
         .cost-calculator { grid-column: 1 / -1; text-align: center; animation-delay: 0.2s; }
-        .heatmap { grid-column: 1 / 12; animation-delay: 0.4s; }
-        .ticket-simulator-wrapper { grid-column: 1 / 12; animation-delay: 0.6s; }
+        .heatmap { grid-column: 1 / -1; animation-delay: 0.4s; }
+        .ticket-simulator-wrapper { grid-column: 1 / -1; animation-delay: 0.6s; }
         
         /* Grid Responsiveness */
         @media (min-width: 1024px) {
@@ -82,6 +82,14 @@
             margin-top: 1rem;
         }
         #global-solutions-button:hover { background-color: #55d677; }
+        .roi-scroll-button {
+            background-color: var(--color-warning);
+            box-shadow: 0 4px 15px rgba(255, 159, 10, 0.4);
+            margin-top: 10px;
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+        .roi-scroll-button:hover { background-color: #ffb74d; }
 
         /* Heatmap styles */
         #heatmap-container { display: flex; flex-direction: column; gap: 8px; }
@@ -114,7 +122,6 @@
         .swot-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
         @media (min-width: 1024px) { .swot-grid { grid-template-columns: repeat(2, 1fr); } }
         .swot-quadrant { background-color: rgba(68, 68, 70, 0.8); padding: 20px; border-radius: 10px; border: 1px solid var(--color-card-border); }
-        /* ... (rest of SWOT styles) ... */
         .swot-quadrant h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 15px; opacity: 1; display: flex; align-items: center; }
         .swot-quadrant h3 i { margin-right: 10px; }
         .quadrant-strengths h3 { color: var(--color-success); } .quadrant-weaknesses h3 { color: var(--color-danger); }
@@ -135,9 +142,15 @@
         .swot-solution-banner ul { padding-left: 20px; list-style-type: '⚡ '; }
         .swot-solution-banner li { margin-bottom: 8px; font-weight: 500;}
         
-        /* Deep Dive Analytics Styles */
-        .deep-dive-analytics { grid-column: 1 / -1; margin-top: 30px; }
-        .deep-dive-analytics h2 { color: var(--color-warning); border-bottom: 1px solid var(--color-warning); padding-bottom: 0.75rem; margin-bottom: 1.5rem; }
+        /* Deep Dive Analytics Styles (AGORA DENTRO DO MODAL) */
+        .deep-dive-analytics { grid-column: 1 / -1; margin-top: 30px; border-top: 2px solid var(--color-primary); padding-top: 20px;}
+        .deep-dive-analytics h2 { 
+            color: var(--color-warning); 
+            border-bottom: 1px solid var(--color-warning); 
+            padding-bottom: 0.75rem; 
+            margin-bottom: 1.5rem; 
+            scroll-margin-top: 30px; /* Para o scroll suave */
+        }
         .analytics-content { display: grid; grid-template-columns: 1fr; gap: 20px; }
         @media (min-width: 900px) { .analytics-content { grid-template-columns: repeat(2, 1fr); } }
         
@@ -230,13 +243,13 @@
     <div class="dashboard">
         <header class="header">
             <h1>Intellisense AI - Ativo de Guerra: Simulador Operacional Nacional</h1>
-            <p>Dashboard de Eficiência - A Forja da Persuasão Digital (v7.0 - OVERLORD)</p>
+            <p>Dashboard de Eficiência - A Forja da Persuasão Digital (v7.1 - CERBERUS)</p>
             <div id="user-id-display"></div>
         </header>
         
-        <!-- PRIORIDADE 2: DASHBOARD DE OPORTUNIDADE (Calculadora transformada) -->
+        <!-- DASHBOARD DE OPORTUNIDADE -->
         <div class="card cost-calculator">
-            <h2><i data-feather="monitor"></i> Dashboard de Oportunidade (v7.0)</h2>
+            <h2><i data-feather="monitor"></i> Dashboard de Oportunidade (v7.1)</h2>
             <div class="opportunity-dashboard-content">
                 <!-- LADO ESQUERDO: O PROBLEMA (O Custo) -->
                 <div class="dashboard-problem">
@@ -263,13 +276,14 @@
             <h2><i data-feather="activity"></i> Mapa de Calor de Falhas (Argos Data)</h2>
             <p>Análise de 500 avaliações negativas - Áreas de Maior Severidade</p>
             <div id="heatmap-container">
+                <!-- Barras populadas pelo JS e usadas para acionar o Modal SWOT -->
                 <div class="bar" data-category="Check-in"><span class="bar-label">Check-in</span><span class="bar-value">(35%)</span></div>
                 <div class="bar" data-category="Piscina/Área Externa"><span class="bar-label">Piscina/Área Externa</span><span class="bar-value">(25%)</span></div>
                 <div class="bar" data-category="Serviço de Quarto"><span class="bar-label">Serviço de Quarto</span><span class="bar-value">(20%)</span></div>
                 <div class="bar" data-category="Manutenção"><span class="bar-label">Manutenção</span><span class="bar-value">(15%)</span></div>
                 <div class="bar" data-category="A&B"><span class="bar-label">A&B</span><span class="bar-value">(5%)</span></div>
             </div>
-            <small>**Clique em uma barra para Análise SWOT aprofundada**.</small>
+            <small>**Clique em uma barra ou fatia da pizza para Análise SWOT aprofundada**.</small>
         </div>
         <div class="card ticket-simulator-wrapper">
             <h2><i data-feather="tag"></i> Simulador de Tickets Inteligentes</h2>
@@ -288,20 +302,28 @@
         </div>
     </div>
     
-    <!-- Modal SWOT (Análise Individual) -->
+    <!-- Modal SWOT (Análise Individual - AGORA COM DEEP DIVE EMBUTIDO) -->
     <div class="swot-modal-overlay" id="swot-modal-overlay">
         <div class="swot-modal" id="swot-modal">
             <div class="modal-header">
                 <h2 id="swot-title"></h2>
                 <button class="close-button" id="close-swot-modal"><i data-feather="x"></i></button>
             </div>
-            <div class="swot-grid" id="swot-grid-content"></div>
             
+            <!-- Quadrantes SWOT e Banner de Solução -->
+            <div class="swot-grid" id="swot-grid-content">
+                <!-- Conteúdo SWOT gerado via JS -->
+            </div>
+            
+            <!-- Deep Dive Analytics MOVIDO PARA DENTRO DO MODAL -->
             <div class="deep-dive-analytics">
-                <h2><i data-feather="database"></i> Deep Dive Analytics (Custo/Benefício)</h2>
+                <h2 id="deep-dive-title"><i data-feather="database"></i> Deep Dive Analytics (Custo/Benefício)</h2>
                 <div class="analytics-content">
-                    <div id="benchmark-module"></div>
+                    <div id="benchmark-module">
+                        <!-- Tabela de Benchmarking gerada via JS -->
+                    </div>
                     <div id="roi-module" class="chart-container">
+                        <!-- Gráfico de ROI gerado via JS -->
                         <canvas id="roi-chart"></canvas>
                     </div>
                 </div>
@@ -384,10 +406,16 @@
 
         // --- CORE APPLICATION LOGIC & DYNAMIC DATA ---
 
+        // Dados de Demonstração (MOCK SWOT e Projeções)
         const SWOTData = {
             "Check-in": { 
-                impact: 0.35, // 35% do impacto total
-                SWOT: { /* ... dados swot ... */ },
+                impact: 0.35, 
+                SWOT: { 
+                    strengths: [{title: "Sistema de Gerenciamento", detail: "O PMS atual é robusto para reservas."}, {title: "Staff Treinado", detail: "A equipe de recepção é cortês e profissional."}],
+                    weaknesses: [{title: "Processos Manuais", detail: "O preenchimento de fichas e a liberação de chaves são lentos."}, {title: "Falta de Upsell", detail: "Oportunidades de receita extra são perdidas na hora do check-in."}],
+                    opportunities: [{title: "Pré-Check-in Digital", detail: "Implementar um sistema de autoatendimento via app."}, {title: "Venda Cruzada", detail: "Integrar promoções de A&B no processo de chegada."}],
+                    threats: [{title: "Concorrência", detail: "Hotéis vizinhos já oferecem check-in digital express."}, {title: "Avaliações Negativas", detail: "O tempo de espera alto gera críticas imediatas."}]
+                },
                 deepDive: {
                     benchmark: [
                         { metric: "Tempo Médio de Check-in", nacional: "35 min", benchmark: "5 min" },
@@ -402,7 +430,12 @@
             },
             "Piscina/Área Externa": { 
                 impact: 0.25, 
-                SWOT: { /* ... dados swot ... */ },
+                SWOT: {
+                    strengths: [{title: "Design de Alto Padrão", detail: "Área de lazer com arquitetura premiada."}, {title: "Vista Privilegiada", detail: "Localização única com vista panorâmica."}],
+                    weaknesses: [{title: "Superlotação", detail: "Falta de controle de acesso e lotação em horários de pico."}, {title: "Serviço Lento", detail: "Demora na entrega de pedidos e reposição de toalhas."}],
+                    opportunities: [{title: "Controle de Fluxo IA", detail: "Usar IA para gerenciar o acesso e evitar superlotação."}, {title: "Serviço Remoto", detail: "Implementar pedidos de bar via app de forma coordenada."}],
+                    threats: [{title: "Redes Sociais", detail: "Fotos de áreas superlotadas prejudicam a imagem da marca."}, {title: "Custos Operacionais", detail: "A má gestão de toalhas e suprimentos eleva o custo."}]
+                },
                 deepDive: {
                     benchmark: [
                         { metric: "Tempo de Espera por Serviço", nacional: "15 min", benchmark: "5 min" },
@@ -417,7 +450,12 @@
             },
             "Serviço de Quarto": { 
                 impact: 0.20, 
-                SWOT: { /* ... dados swot ... */ },
+                SWOT: {
+                    strengths: [{title: "Cardápio de Qualidade", detail: "Alta qualidade dos ingredientes."}, {title: "Disponibilidade 24h", detail: "O serviço funciona sem interrupções."}],
+                    weaknesses: [{title: "Erros de Pedido", detail: "Comunicação manual gera alta taxa de erro (18%)."}, {title: "Logística Ineficiente", detail: "O tempo de entrega é demorado devido à falta de coordenação."}],
+                    opportunities: [{title: "Digitalização do Cardápio", detail: "Pedidos via QR Code reduzem erros."}, {title: "Otimização de Rotas", detail: "Usar IA para roteirizar a entrega dos pedidos."}],
+                    threats: [{title: "Reclamações na Entrega", detail: "Principal motivo para notas baixas no checkout."}, {title: "Perda de Alimentos", detail: "Pedidos errados ou atrasados resultam em desperdício."}]
+                },
                 deepDive: {
                     benchmark: [
                         { metric: "Tempo Médio de Entrega", nacional: "48 min", benchmark: "20 min" },
@@ -432,7 +470,12 @@
             },
             "Manutenção": { 
                 impact: 0.15, 
-                SWOT: { /* ... dados swot ... */ },
+                SWOT: {
+                    strengths: [{title: "Equipe Técnica Experiente", detail: "Os técnicos são qualificados."}, {title: "Ferramental Completo", detail: "Dispõe de todas as ferramentas necessárias."}],
+                    weaknesses: [{title: "Reatividade", detail: "Só atua após a falha, sem prevenção (3h de tempo médio de resolução)."}, {title: "Comunicação Ruim", detail: "Demora na abertura do ticket e na resposta ao hóspede."}],
+                    opportunities: [{title: "Manutenção Preditiva (IoT)", detail: "Monitorar equipamentos antes da quebra."}, {title: "Sistema de Tickets Unificado", detail: "Centralizar todas as solicitações de reparo."}],
+                    threats: [{title: "Aumento de Custos", detail: "Falhas inesperadas causam reparos caros e emergenciais."}, {title: "Indisponibilidade de Quartos", detail: "Quartos inativos por reparos longos geram perda de receita."}]
+                },
                 deepDive: {
                     benchmark: [
                         { metric: "Tempo Médio de Resolução", nacional: "3h 15min", benchmark: "45 min" },
@@ -447,7 +490,12 @@
             },
             "A&B": { 
                 impact: 0.05, 
-                SWOT: { /* ... dados swot ... */ },
+                SWOT: {
+                    strengths: [{title: "Cozinha Premiada", detail: "Chef renomado e alta gastronomia."}, {title: "Ambiente Agradável", detail: "Decoração moderna e confortável."}],
+                    weaknesses: [{title: "Baixa Ocupação", detail: "Apenas 25% de ocupação média, abaixo do ideal."}, {title: "Desperdício Alto", detail: "12% de custo com descarte de alimentos."}],
+                    opportunities: [{title: "Análise de Cardápio IA", detail: "Otimizar o menu para rentabilidade."}, {title: "Promoções Personalizadas", detail: "Oferecer vouchers baseados no perfil do hóspede."}],
+                    threats: [{title: "Concorrência Externa", detail: "Restaurantes locais atraem clientes do hotel."}, {title: "Prejuízo Financeiro", detail: "Desperdício e baixa ocupação corroem a margem de lucro."}]
+                },
                 deepDive: {
                     benchmark: [
                         { metric: "Ocupação Média do Restaurante", nacional: "25%", benchmark: "70%" },
@@ -469,10 +517,11 @@
         const categoryLossText = document.getElementById('category-loss-text');
         const heatmapBars = document.querySelectorAll('.bar');
         const swotModalOverlay = document.getElementById('swot-modal-overlay');
-        const globalModalOverlay = document.getElementById('global-modal-overlay'); // Novo
-        const globalSolutionsButton = document.getElementById('global-solutions-button'); // Novo
-        const closeGlobalModalButton = document.getElementById('close-global-modal'); // Novo
-        const globalSolutionsContent = document.getElementById('global-solutions-content'); // Novo
+        const swotModal = document.getElementById('swot-modal'); // Novo
+        const globalModalOverlay = document.getElementById('global-modal-overlay');
+        const globalSolutionsButton = document.getElementById('global-solutions-button');
+        const closeGlobalModalButton = document.getElementById('close-global-modal');
+        const globalSolutionsContent = document.getElementById('global-solutions-content');
         const swotTitle = document.getElementById('swot-title');
         const swotGridContent = document.getElementById('swot-grid-content');
         const closeSwotModalButton = document.getElementById('close-swot-modal');
@@ -481,7 +530,7 @@
         const ticketList = document.getElementById('ticket-list');
         const benchmarkModule = document.getElementById('benchmark-module');
         const roiCanvas = document.getElementById('roi-chart');
-        const doughnutCanvas = document.getElementById('doughnut-chart'); // Novo
+        const doughnutCanvas = document.getElementById('doughnut-chart');
 
         let activeCategory = null;
 
@@ -492,13 +541,12 @@
             return 'R$ ' + amount.toLocaleString('pt-BR', { minimumFractionDigits: 0 });
         }
 
-        // Retorna a perda total anual baseada no slider
         function getBaseAnnualLoss() {
             const baseRate = parseInt(rateSlider.value) / 100;
             return BASE_ANNUAL_REVENUE * baseRate;
         }
 
-        // --- COST CALCULATOR LOGIC & DOUGHNUT CHART (PRIORIDADE 2) ---
+        // --- COST CALCULATOR LOGIC & DOUGHNUT CHART ---
         function updateRevenueLost() {
             rateDisplay.textContent = rateSlider.value;
             const baseAnnualLoss = getBaseAnnualLoss();
@@ -506,15 +554,15 @@
             let currentLossText = "Receita Anual Total Perdida:";
 
             if (activeCategory && SWOTData[activeCategory]) {
-                // Se uma categoria está ativa, mostra a perda específica dessa categoria
+                // Se uma categoria está ativa (modal aberto), mostra a perda específica
                 totalLoss = baseAnnualLoss * SWOTData[activeCategory].impact;
                 currentLossText = `Perda estimada por falhas em "${activeCategory}":`;
             }
             revenueLostDisplay.textContent = formatCurrency(totalLoss);
             categoryLossText.textContent = currentLossText;
             
-            // Sempre que o slider muda, atualiza o gráfico de pizza
-            if (!activeCategory) { // Só atualiza a perda total (não a específica)
+            // Só atualiza o gráfico de pizza se não houver categoria ativa (para não sobrescrever a visão específica)
+            if (!activeCategory) { 
                  renderDoughnutChart(baseAnnualLoss);
             }
         }
@@ -547,7 +595,10 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { position: 'right' },
+                        legend: { 
+                            position: 'right',
+                            labels: { color: 'var(--color-text-light)' } // PRIORIDADE 1: Legenda explícita
+                        },
                         tooltip: {
                             callbacks: {
                                 label: function(context) {
@@ -563,11 +614,12 @@
                             }
                         }
                     },
+                    // Caminho 2: Clicar na fatia do gráfico abre o modal SWOT
                     onClick: (e, elements) => {
                         if (elements.length > 0) {
                             const index = elements[0].index;
                             const category = categories[index];
-                            handleHeatmapClick(category); // Abre o modal SWOT correspondente
+                            handleHeatmapClick(category); 
                         }
                     }
                 }
@@ -577,7 +629,7 @@
             doughnutChart = new Chart(doughnutCanvas, config);
         }
 
-        // --- DEEP DIVE ANALYTICS LOGIC ---
+        // --- DEEP DIVE ANALYTICS LOGIC (AGORA DENTRO DO MODAL) ---
 
         function renderBenchmarkTable(data) {
             let html = `
@@ -637,7 +689,7 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { display: false },
+                        legend: { display: false, labels: { color: 'var(--color-text-light)' } }, // PRIORIDADE 1: Legenda explícita
                         title: {
                             display: true,
                             text: roiData.title,
@@ -651,11 +703,12 @@
                     },
                     scales: {
                         x: {
-                            ticks: { callback: formatCurrency },
+                            ticks: { callback: formatCurrency, color: 'var(--color-text-light)' }, // PRIORIDADE 1: Ticks explícitos
                             grid: { color: 'rgba(255, 255, 255, 0.1)' } 
                         },
                         y: {
-                            grid: { display: false } 
+                            grid: { display: false },
+                            ticks: { color: 'var(--color-text-light)' } // PRIORIDADE 1: Ticks explícitos
                         }
                     }
                 }
@@ -693,6 +746,16 @@
             renderSWOTModal(category);
         }
 
+        function smoothScrollToDeepDive() {
+            const deepDiveSection = document.getElementById('deep-dive-title');
+            if (deepDiveSection) {
+                swotModal.scrollTo({
+                    top: deepDiveSection.offsetTop - 10, // 10px de padding/margem extra
+                    behavior: 'smooth'
+                });
+            }
+        }
+
         function renderSWOTModal(category) {
             const data = SWOTData[category];
             if (!data) return;
@@ -712,6 +775,8 @@
                 <div class="swot-solution-banner">
                     <h3><i data-feather="tool"></i> Plano de Ação Recomendado (Intellisense AI)</h3>
                     <ul>${solutionList}</ul>
+                    <!-- Caminho 3: Novo botão para scrollar para o Deep Dive -->
+                    <button class="roi-scroll-button" id="scroll-to-roi-button"><i data-feather="dollar-sign"></i> Ver Projeção de ROI</button>
                 </div>
             `;
             
@@ -726,6 +791,9 @@
             
             swotModalOverlay.classList.add('open');
             feather.replace();
+            
+            // Adiciona o listener para o scroll após a abertura do modal
+            document.getElementById('scroll-to-roi-button').addEventListener('click', smoothScrollToDeepDive);
         }
 
         function closeSWOTModal() {
@@ -738,7 +806,7 @@
 
         function renderGlobalSolutionsModal() {
             let html = `<h3>Plano OVERLORD: A Solução de Cobertura Total</h3>`;
-            html += `<p style="font-style: italic;">A Intellisense AI garante o fechamento de todos os pontos de ineficiência de forma estratégica.</p>`;
+            html += `<p style="font-style: italic;">O Plano OVERLORD da Intellisense AI endereça de forma sistêmica os 5 pilares de ineficiência, garantindo o máximo retorno sobre o investimento.</p>`;
 
             Object.keys(SWOTData).forEach(category => {
                 const data = SWOTData[category];
@@ -761,7 +829,7 @@
         }
 
 
-        // --- TICKET FIREBASE LOGIC ---
+        // --- TICKET FIREBASE LOGIC (mantido) ---
 
         async function createTicket() {
             if (!userId) return console.error("User not authenticated to create ticket.");
@@ -906,6 +974,7 @@
             feather.replace();
             rateSlider.addEventListener('input', updateRevenueLost);
             
+            // Caminho 1: Event listener para as barras do Mapa de Calor
             heatmapBars.forEach(bar => {
                 bar.addEventListener('click', () => handleHeatmapClick(bar.dataset.category));
             });
@@ -914,7 +983,7 @@
             closeSwotModalButton.addEventListener('click', closeSWOTModal);
             swotModalOverlay.addEventListener('click', (e) => { if (e.target === swotModalOverlay) closeSWOTModal(); });
 
-            // Eventos do Novo Modal Global (OVERLORD)
+            // Eventos do Modal Global (OVERLORD)
             globalSolutionsButton.addEventListener('click', renderGlobalSolutionsModal);
             closeGlobalModalButton.addEventListener('click', closeGlobalSolutionsModal);
             globalModalOverlay.addEventListener('click', (e) => { if (e.target === globalModalOverlay) closeGlobalSolutionsModal(); });
@@ -924,7 +993,6 @@
 
             // Trigger initial calculation and chart render
             updateRevenueLost();
-            renderDoughnutChart(getBaseAnnualLoss()); // Renderiza o gráfico de pizza inicial
         });
     </script>
 </body>
