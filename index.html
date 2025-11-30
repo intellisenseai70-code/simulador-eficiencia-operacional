@@ -3,16 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Intellisense AI - Ativo de Guerra: Simulador Operacional Nacional (v5.1)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Intellisense AI - Ativo de Guerra: Simulador Operacional Nacional (v6.0 - Juízo Final)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <!-- Adicionando Chart.js para o Gráfico de Projeção de ROI -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
     <style>
         :root {
             --color-primary: #0a84ff; --color-danger: #ff453a; --color-success: #34c759; --color-warning: #ff9f0a;
-            --color-bg-dark: #121212; --color-bg-gradient-start: #1c1c1e; --color-bg-gradient-end: #121212;
+            --color-bg-dark: #121212; --color-bg-gradient-start: #1c1c1e; --color-bg-gradient-end: #0d0d0d;
             --color-text-light: #f2f2f7; --color-card-bg: rgba(44, 44, 46, 0.7 ); --color-card-border: rgba(58, 58, 60, 0.5);
             --font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             --backdrop-blur: 15px;
+            --color-info: #007aff; /* Novo para Gráfico/Tabela */
         }
         body {
             font-family: var(--font-family); background: radial-gradient(circle at top left, var(--color-bg-gradient-start) 0%, var(--color-bg-gradient-end) 100%);
@@ -36,20 +39,37 @@
         .cost-calculator { grid-column: 1 / -1; text-align: center; animation-delay: 0.2s; }
         .heatmap { grid-column: 1 / 12; animation-delay: 0.4s; }
         .ticket-simulator-wrapper { grid-column: 1 / 12; animation-delay: 0.6s; }
+        
+        /* Grid Responsiveness */
         @media (min-width: 1024px) {
             .heatmap { grid-column: 1 / 8; }
             .ticket-simulator-wrapper { grid-column: 8 / -1; }
         }
         @keyframes fadeInSlideUp { to { opacity: 1; transform: translateY(0); } }
         #revenue-lost {
-            font-size: 5rem; color: var(--color-danger); font-weight: 700; text-align: center; margin: 1rem 0;
+            font-size: 5rem; color: var(--color-danger); font-weight: 800; text-align: center; margin: 1rem 0;
             animation: pulse 1.5s infinite alternate; text-shadow: 0 0 20px var(--color-danger);
         }
         @keyframes pulse {
             from { transform: scale(1); text-shadow: 0 0 20px rgba(255, 69, 58, 0.4); }
             to { transform: scale(1.03); text-shadow: 0 0 35px rgba(255, 69, 58, 0.8); }
         }
-        input[type="range"] { width: 60%; margin: 1rem auto; }
+        input[type="range"], input[type="text"] { 
+            width: 100%; padding: 0.75rem; margin: 0.5rem 0 1rem 0; background-color: rgba(68, 68, 70, 0.8);
+            border: 1px solid var(--color-card-border); border-radius: 6px; color: var(--color-text-light);
+            box-sizing: border-box;
+        }
+        
+        /* Buttons */
+        button {
+            background-color: var(--color-primary); color: white; border: none; padding: 0.75rem 1.5rem;
+            border-radius: 6px; font-weight: 600; cursor: pointer; transition: background-color 0.2s ease, transform 0.1s ease;
+            box-shadow: 0 4px 15px rgba(10, 132, 255, 0.3); width: 100%;
+        }
+        button:hover { background-color: #3d91ff; transform: translateY(-1px); }
+        button:active { transform: translateY(0); }
+
+        /* Heatmap styles */
         #heatmap-container { display: flex; flex-direction: column; gap: 8px; }
         .bar {
             height: 35px; background: linear-gradient(90deg, var(--color-primary) 0%, #0a84ff88 100%); color: white; text-align: left;
@@ -59,19 +79,21 @@
         .bar:hover { transform: scale(1.02); }
         .bar.active-drilldown { transform: scale(1.03); border: 2px solid var(--color-success); box-shadow: 0 0 15px rgba(52, 199, 89, 0.5); }
         .bar.faded { opacity: 0.3; }
+
+        /* SWOT Modal Styles */
         .swot-modal-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.9);
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.95);
             display: none; align-items: center; justify-content: center; z-index: 1000; opacity: 0; transition: opacity 0.3s ease;
         }
         .swot-modal-overlay.open { display: flex; opacity: 1; }
         .swot-modal {
             width: 90%; max-width: 1400px; height: 90vh; background-color: var(--color-card-bg); border-radius: 15px;
-            border: 1px solid var(--color-primary); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.7); padding: 30px;
+            border: 1px solid var(--color-primary); box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9); padding: 30px;
             position: relative; overflow-y: auto; backdrop-filter: blur(var(--backdrop-blur));
         }
         .swot-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--color-card-border); padding-bottom: 15px; margin-bottom: 20px; }
         .swot-header h2 { font-size: 2rem; margin: 0; border-bottom: none; padding-bottom: 0; }
-        .close-button { background: none; border: none; color: white; cursor: pointer; font-size: 1.5rem; opacity: 0.7; transition: opacity 0.2s ease; }
+        .close-button { background: none; border: none; color: white; cursor: pointer; font-size: 1.5rem; opacity: 0.7; transition: opacity 0.2s ease; width: auto; padding: 0;}
         .close-button:hover { opacity: 1; }
         .swot-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
         @media (min-width: 1024px) { .swot-grid { grid-template-columns: repeat(2, 1fr); } }
@@ -86,13 +108,76 @@
         .swot-solution-banner { grid-column: 1 / -1; background: linear-gradient(90deg, var(--color-success) 0%, #34c75988 100%); color: white; padding: 20px; border-radius: 10px; margin-top: 20px; }
         .swot-solution-banner h3 { color: white; border: none; }
         .swot-solution-banner ul { padding-left: 20px; }
+        
+        /* NEW Deep Dive Analytics Styles */
+        .deep-dive-analytics { grid-column: 1 / -1; margin-top: 30px; }
+        .deep-dive-analytics h2 { color: var(--color-warning); border-bottom: 1px solid var(--color-warning); padding-bottom: 0.75rem; margin-bottom: 1.5rem; }
+        .analytics-content { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media (min-width: 900px) { .analytics-content { grid-template-columns: repeat(2, 1fr); } }
+        
+        /* Benchmarking Table */
+        .benchmark-table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+        .benchmark-table th, .benchmark-table td { padding: 10px 15px; text-align: left; border-bottom: 1px solid var(--color-card-border); }
+        .benchmark-table th { background-color: rgba(58, 58, 60, 0.8); font-weight: 700; color: var(--color-primary); }
+        .benchmark-table tr:hover { background-color: rgba(58, 58, 60, 0.5); }
+        .benchmark-table .danger { color: var(--color-danger); font-weight: 700; }
+        .benchmark-table .success { color: var(--color-success); font-weight: 700; }
+
+        /* ROI Chart Container */
+        .chart-container { 
+            background-color: rgba(68, 68, 70, 0.8); 
+            padding: 20px; 
+            border-radius: 10px; 
+            min-height: 300px; 
+            display: flex; 
+            flex-direction: column;
+        }
+
+        /* Ticket Simulator Styles */
+        .ticket-list { 
+            display: flex; flex-direction: column; gap: 10px; max-height: 400px; overflow-y: auto;
+            padding-right: 5px; /* for scrollbar spacing */
+        }
+        .ticket-card {
+            background-color: rgba(68, 68, 70, 0.8); padding: 10px; border-radius: 8px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-left: 4px solid var(--color-danger); transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+        .ticket-card.resolved {
+            border-left: 4px solid var(--color-success); background-color: rgba(68, 70, 68, 0.6);
+            opacity: 0.6;
+        }
+        .ticket-info { flex-grow: 1; }
+        .ticket-status { 
+            display: flex; align-items: center; gap: 10px;
+        }
+        .resolve-btn { 
+            background-color: var(--color-success); 
+            width: auto; padding: 5px 10px; font-size: 0.8rem;
+            box-shadow: none;
+            transition: background-color 0.2s ease;
+        }
+        .resolve-btn:hover { background-color: #55d677; }
+        .status-badge {
+            padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700;
+            text-transform: uppercase;
+        }
+        .status-badge.open { background-color: var(--color-danger); }
+        .status-badge.resolved { background-color: var(--color-success); }
+
+        #user-id-display {
+            font-size: 0.75rem; opacity: 0.6; margin-top: 1rem;
+            word-break: break-all;
+        }
     </style>
 </head>
 <body>
     <div class="dashboard">
         <header class="header">
             <h1>Intellisense AI - Ativo de Guerra: Simulador Operacional Nacional</h1>
-            <p>Dashboard de Eficiência - A Forja da Persuasão Digital</p>
+            <p>Dashboard de Eficiência - A Forja da Persuasão Digital (v6.0 - Juízo Final)</p>
+            <div id="user-id-display"></div>
         </header>
         <div class="card cost-calculator">
             <h2><i data-feather="dollar-sign"></i> Calculadora do Custo da Ineficiência</h2>
@@ -118,14 +203,16 @@
         <div class="card ticket-simulator-wrapper">
             <h2><i data-feather="tag"></i> Simulador de Tickets Inteligentes</h2>
             <div class="guest-view">
-                <h3>Visão do Hóspede</h3>
-                <input type="text" id="problem-input" placeholder="Ex: 'Ar-condicionado não gela.'">
+                <h3>Visão do Hóspede - Abrir Ticket</h3>
+                <input type="text" id="problem-input" placeholder="Ex: 'Ar-condicionado não gela, quarto 302.'">
                 <button id="report-button">🚨 Reportar Problema</button>
             </div>
             <hr style="border-color: var(--color-card-border); margin: 1.5rem 0;">
             <div class="manager-view">
-                <h3>Visão do Gerente</h3>
-                <div id="ticket-list"></div>
+                <h3>Visão do Gerente - Tickets Abertos em Tempo Real</h3>
+                <div id="ticket-list" class="ticket-list">
+                    <p style="text-align: center; opacity: 0.5;">Carregando tickets...</p>
+                </div>
             </div>
         </div>
     </div>
@@ -136,90 +223,552 @@
                 <button class="close-button" id="close-swot-modal"><i data-feather="x"></i></button>
             </div>
             <div class="swot-grid" id="swot-grid-content"></div>
+            
+            <!-- NEW: Deep Dive Analytics Container -->
+            <div class="deep-dive-analytics">
+                <h2><i data-feather="database"></i> Deep Dive Analytics (Custo/Benefício)</h2>
+                <div class="analytics-content">
+                    <div id="benchmark-module">
+                        <!-- Table will be rendered here -->
+                    </div>
+                    <div id="roi-module" class="chart-container">
+                        <canvas id="roi-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
         </div>
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            feather.replace();
-            const SWOTData = {
-                "Check-in": { impact: 0.35, SWOT: { strengths: [{title:"Marca com Apelo Histórico", detail:"A reputação do Hotel Nacional como um ícone arquitetônico atrai um público disposto a pagar mais pela experiência."}], weaknesses: [{title:"Tempo Médio de Espera Elevado (35 min)", detail:"Este tempo é 70% maior que a média de hotéis de luxo concorrentes, causando uma quebra imediata na percepção de exclusividade."}], opportunities: [{title:"Implementar Pré-Check-in via App", detail:"Potencial de redução de 90% no tempo de espera, resultando em um aumento projetado de 15% na pontuação de 'Satisfação na Chegada'."}], threats: [{title:"Perda de Clientes de Primeira Viagem", detail:"Nossa análise estima que 25% dos hóspedes que enfrentam um check-in ruim não retornam, representando um risco direto à receita recorrente."}] } },
-                "Piscina/Área Externa": { impact: 0.25, SWOT: { strengths: [{title:"Design e Vista Deslumbrante", detail:"A área da piscina é um dos ativos mais 'instagramáveis' do hotel, gerando marketing orgânico."}], weaknesses: [{title:"Percepção de Superlotação", detail:"Em horários de pico, a ocupação atinge 70% acima do ideal, diminuindo a sensação de exclusividade."}], opportunities: [{title:"Monitoramento de Ocupação por IA", detail:"Permite gerenciar o fluxo e criar 'horários de exclusividade' para hóspedes que pagam mais, gerando nova receita."}], threats: [{title:"Comentários Negativos em Mídias Sociais", detail:"Fotos de 'piscina lotada' se espalham rapidamente, afetando a imagem de tranquilidade e luxo do hotel."}] } },
-                "Serviço de Quarto": { impact: 0.20, SWOT: { strengths: [{title:"Potencial de Alta Margem", detail:"O serviço de quarto é uma das áreas com maior margem de lucro, se operado com eficiência."}], weaknesses: [{title:"Tempo Médio de Entrega (48 min)", detail:"Pedidos demoram o dobro do tempo aceitável para a categoria, resultando em comida fria e clientes frustrados."}], opportunities: [{title:"Pedidos via QR Code/App", detail:"Elimina erros de comunicação, reduz o tempo de pedido em 80% e permite 'upselling' inteligente e automatizado."}], threats: [{title:"Concorrência com Apps de Delivery", detail:"Hóspedes estão optando por iFood e Rappi, que são mais rápidos e eficientes, causando uma perda direta de receita."}] } },
-                "Manutenção": { impact: 0.15, SWOT: { strengths: [{title:"Equipe Interna Dedicada", detail:"Possuir uma equipe própria permite um conhecimento profundo da infraestrutura complexa do prédio."}], weaknesses: [{title:"Tempo Médio de Resolução (3h 15min)", detail:"Um processo de comunicação quebrado entre recepção e técnicos causa uma demora crítica, inaceitável para um hotel de luxo."}], opportunities: [{title:"Sistema de 'Tickets Inteligentes'", detail:"Um ticket aberto pelo hóspede (com foto) via app vai direto para o técnico mais próximo, reduzindo o tempo de resposta em 75%."}], threats: [{title:"Destruição da Percepção de Luxo", detail:"Nada quebra mais a imagem de um hotel 5 estrelas do que um ar-condicionado ou chuveiro que não funciona."}] } },
-                "A&B": { impact: 0.05, SWOT: { strengths: [{title:"Localização Privilegiada", detail:"O hotel possui espaços com potencial para se tornarem destinos gastronômicos por si só."}], weaknesses: [{title:"Baixa Ocupação do Restaurante (25%)", detail:"A maioria dos hóspedes não janta no hotel, indicando um desalinhamento entre a oferta e o desejo do cliente."}], opportunities: [{title:"Análise de Dados de Consumo", detail:"Permite otimizar o cardápio com base na preferência real dos hóspedes, aumentando a atratividade e a margem de lucro."}], threats: [{title:"Vasta Concorrência Gastronômica", detail:"A Zona Sul oferece opções de alta qualidade que atraem os hóspedes para fora do hotel, capturando a receita que deveria ser sua."}] } }
-            };
-            const rateSlider = document.getElementById('non-return-rate');
-            const rateDisplay = document.getElementById('rate-display');
-            const revenueLostDisplay = document.getElementById('revenue-lost');
-            const categoryLossText = document.getElementById('category-loss-text');
-            const heatmapBars = document.querySelectorAll('.bar');
-            const swotModalOverlay = document.getElementById('swot-modal-overlay');
-            const swotTitle = document.getElementById('swot-title');
-            const swotGridContent = document.getElementById('swot-grid-content');
-            const closeSwotModalButton = document.getElementById('close-swot-modal');
-            let activeCategory = null;
-            function updateRevenueLost() {
-                const baseRate = parseInt(rateSlider.value) / 100;
-                rateDisplay.textContent = rateSlider.value;
-                const BASE_ANNUAL_REVENUE = 3500000;
-                let totalLoss = BASE_ANNUAL_REVENUE * baseRate;
-                let currentLossText = "Receita Anual Perdida:";
-                if (activeCategory && SWOTData[activeCategory]) {
-                    totalLoss *= SWOTData[activeCategory].impact;
-                    currentLossText = `Perda estimada por falhas em "${activeCategory}":`;
+    <script type="module">
+        // --- FIREBASE INITIALIZATION AND AUTH ---
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, collection, addDoc, updateDoc, doc, onSnapshot, // setLogLevel,
+            query, serverTimestamp 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global variables provided by the Canvas environment
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // setLogLevel('Debug'); // Uncomment for debugging Firebase
+
+        let db, auth, userId;
+        let roiChart = null; // Variable global para a instância do Chart.js
+        
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+        } catch (error) {
+            console.error("Firebase Initialization Error:", error);
+        }
+        
+
+        // Function to handle authentication and get user ID
+        async function authenticateUser() {
+            try {
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
                 }
-                revenueLostDisplay.textContent = 'R$ ' + totalLoss.toLocaleString('pt-BR', { minimumFractionDigits: 0 });
-                categoryLossText.textContent = currentLossText;
+                // Wait for the auth state change to ensure user is logged in
+                return new Promise((resolve) => {
+                    const unsubscribe = onAuthStateChanged(auth, (user) => {
+                        if (user) {
+                            userId = user.uid;
+                            document.getElementById('user-id-display').innerHTML = `Usuário (ID): <strong>${userId}</strong>`;
+                            console.log("Firebase Auth successful. User ID:", userId);
+                            unsubscribe();
+                            resolve(true);
+                        } else {
+                            console.error("Authentication failed: No user found after sign-in attempt.");
+                            unsubscribe();
+                            resolve(false);
+                        }
+                    });
+                });
+            } catch (error) {
+                console.error("Firebase Auth Error:", error);
+                return false;
             }
-            function renderSWOTModal(category) {
-                const data = SWOTData[category];
-                if (!data) return;
-                swotTitle.innerHTML = `<i data-feather="search"></i> Análise SWOT: ${category}`;
-                const renderItems = (items) => items.map(item => `<div class="swot-item"><h4><i data-feather="chevrons-right"></i> ${item.title}</h4><p>${item.detail}</p></div>`).join('');
-                const solutionBanner = `<div class="swot-solution-banner"><h3><i data-feather="tool"></i> Plano de Ação Recomendado (Intellisense AI)</h3><ul><li>Implementação do Sistema de Tickets Inteligentes para reduzir o tempo de resolução da Manutenção em 75%.</li><li>Lançamento do Módulo de Pré-Check-in e Upsell para otimizar a recepção e aumentar a receita por hóspede em 10%.</li><li>Integração do Módulo de Análise Preditiva para antecipar falhas operacionais antes que elas impactem o cliente.</li></ul></div>`;
-                swotGridContent.innerHTML = `
-                    <div class="swot-quadrant quadrant-strengths"><h3><i data-feather="shield"></i> Forças</h3>${renderItems(data.SWOT.strengths)}</div>
-                    <div class="swot-quadrant quadrant-weaknesses"><h3><i data-feather="alert-triangle"></i> Fraquezas</h3>${renderItems(data.SWOT.weaknesses)}</div>
-                    <div class="swot-quadrant quadrant-opportunities"><h3><i data-feather="trending-up"></i> Oportunidades</h3>${renderItems(data.SWOT.opportunities)}</div>
-                    <div class="swot-quadrant quadrant-threats"><h3><i data-feather="cloud-lightning"></i> Ameaças</h3>${renderItems(data.SWOT.threats)}</div>
-                    ${solutionBanner}`;
-                swotModalOverlay.classList.add('open');
-                feather.replace();
+        }
+
+        // --- CORE APPLICATION LOGIC & DYNAMIC DATA ---
+
+        const SWOTData = {
+            "Check-in": { 
+                impact: 0.35, 
+                SWOT: { 
+                    strengths: [{title:"Marca com Apelo Histórico", detail:"A reputação do Hotel Nacional como um ícone arquitetônico atrai um público disposto a pagar mais pela experiência."}], 
+                    weaknesses: [{title:"Tempo Médio de Espera Elevado (35 min)", detail:"Este tempo é 70% maior que a média de hotéis de luxo concorrentes, causando uma quebra imediata na percepção de exclusividade."}], 
+                    opportunities: [{title:"Implementar Pré-Check-in via App", detail:"Potencial de redução de 90% no tempo de espera, resultando em um aumento projetado de 15% na pontuação de 'Satisfação na Chegada'."}], 
+                    threats: [{title:"Perda de Clientes de Primeira Viagem", detail:"Nossa análise estima que 25% dos hóspedes que enfrentam um check-in ruim não retornam, representando um risco direto à receita recorrente."}] 
+                },
+                // Deep Dive Analytics Data
+                deepDive: {
+                    benchmark: [
+                        { metric: "Tempo Médio de Check-in", nacional: "35 min", benchmark: "5 min" },
+                        { metric: "Taxa de Upsell na Chegada", nacional: "2%", benchmark: "15%" }
+                    ],
+                    roi: {
+                        title: "Projeção de ROI para Otimização do Check-in",
+                        gain: 120000,
+                        cost: 80000
+                    }
+                }
+            },
+            "Piscina/Área Externa": { 
+                impact: 0.25, 
+                SWOT: { 
+                    strengths: [{title:"Design e Vista Deslumbrante", detail:"A área da piscina é um dos ativos mais 'instagramáveis' do hotel, gerando marketing orgânico."}], 
+                    weaknesses: [{title:"Percepção de Superlotação", detail:"Em horários de pico, a ocupação atinge 70% acima do ideal, diminuindo a sensação de exclusividade."}], 
+                    opportunities: [{title:"Monitoramento de Ocupação por IA", detail:"Permite gerenciar o fluxo e criar 'horários de exclusividade' para hóspedes que pagam mais, gerando nova receita."}], 
+                    threats: [{title:"Comentários Negativos em Mídias Sociais", detail:"Fotos de 'piscina lotada' se espalham rapidamente, afetando a imagem de tranquilidade e luxo do hotel."}] 
+                },
+                deepDive: {
+                    benchmark: [
+                        { metric: "Tempo de Espera por Serviço", nacional: "15 min", benchmark: "5 min" },
+                        { metric: "Avaliação de Lotação (Score 1-5)", nacional: "2.1", benchmark: "4.8" }
+                    ],
+                    roi: {
+                        title: "Projeção de ROI para Gerenciamento de Fluxo na Piscina",
+                        gain: 50000,
+                        cost: 45000
+                    }
+                }
+            },
+            "Serviço de Quarto": { 
+                impact: 0.20, 
+                SWOT: { 
+                    strengths: [{title:"Potencial de Alta Margem", detail:"O serviço de quarto é uma das áreas com maior margem de lucro, se operado com eficiência."}], 
+                    weaknesses: [{title:"Tempo Médio de Entrega (48 min)", detail:"Pedidos demoram o dobro do tempo aceitável para a categoria, resultando em comida fria e clientes frustrados."}], 
+                    opportunities: [{title:"Pedidos via QR Code/App", detail:"Elimina erros de comunicação, reduz o tempo de pedido em 80% e permite 'upselling' inteligente e automatizado."}], 
+                    threats: [{title:"Concorrência com Apps de Delivery", detail:"Hóspedes estão optando por iFood e Rappi, que são mais rápidos e eficientes, causando uma perda direta de receita."}] 
+                },
+                deepDive: {
+                    benchmark: [
+                        { metric: "Tempo Médio de Entrega", nacional: "48 min", benchmark: "20 min" },
+                        { metric: "Taxa de Erro nos Pedidos", nacional: "18%", benchmark: "< 3%" }
+                    ],
+                    roi: {
+                        title: "Projeção de ROI para Otimização do Serviço de Quarto",
+                        gain: 95000,
+                        cost: 70000
+                    }
+                }
+            },
+            "Manutenção": { 
+                impact: 0.15, 
+                SWOT: { 
+                    strengths: [{title:"Equipe Interna Dedicada", detail:"Possuir uma equipe própria permite um conhecimento profundo da infraestrutura complexa do prédio."}], 
+                    weaknesses: [{title:"Tempo Médio de Resolução (3h 15min)", detail:"Um processo de comunicação quebrado entre recepção e técnicos causa uma demora crítica, inaceitável para um hotel de luxo."}], 
+                    opportunities: [{title:"Sistema de 'Tickets Inteligentes'", detail:"Um ticket aberto pelo hóspede (com foto) via app vai direto para o técnico mais próximo, reduzindo o tempo de resposta em 75%."}], 
+                    threats: [{title:"Destruição da Percepção de Luxo", detail:"Nada quebra mais a imagem de um hotel 5 estrelas do que um ar-condicionado ou chuveiro que não funciona."}] 
+                },
+                deepDive: {
+                    benchmark: [
+                        { metric: "Tempo Médio de Resolução", nacional: "3h 15min", benchmark: "45 min" },
+                        { metric: "Reclamações de Falha no Quarto (Média)", nacional: "4.5/mês", benchmark: "1/mês" }
+                    ],
+                    roi: {
+                        title: "Projeção de ROI para Manutenção Preditiva",
+                        gain: 75000,
+                        cost: 60000
+                    }
+                }
+            },
+            "A&B": { 
+                impact: 0.05, 
+                SWOT: { 
+                    strengths: [{title:"Localização Privilegiada", detail:"O hotel possui espaços com potencial para se tornarem destinos gastronômicos por si só."}], 
+                    weaknesses: [{title:"Baixa Ocupação do Restaurante (25%)", detail:"A maioria dos hóspedes não janta no hotel, indicando um desalinhamento entre a oferta e o desejo do cliente."}], 
+                    opportunities: [{title:"Análise de Dados de Consumo", detail:"Permite otimizar o cardápio com base na preferência real dos hóspedes, aumentando a atratividade e a margem de lucro."}], 
+                    threats: [{title:"Vasta Concorrência Gastronômica", detail:"A Zona Sul oferece opções de alta qualidade que atraem os hóspedes para fora do hotel, capturando a receita que deveria ser sua."}] 
+                },
+                deepDive: {
+                    benchmark: [
+                        { metric: "Ocupação Média do Restaurante", nacional: "25%", benchmark: "70%" },
+                        { metric: "Desperdício Alimentar (% do Custo)", nacional: "12%", benchmark: "4%" }
+                    ],
+                    roi: {
+                        title: "Projeção de ROI para Otimização de A&B (Cardápio)",
+                        gain: 40000,
+                        cost: 30000
+                    }
+                }
             }
-            function closeSWOTModal() {
-                swotModalOverlay.classList.remove('open');
-                heatmapBars.forEach(b => b.classList.remove('active-drilldown', 'faded'));
-                activeCategory = null;
-                updateRevenueLost();
+        };
+
+        // DOM Elements
+        const rateSlider = document.getElementById('non-return-rate');
+        const rateDisplay = document.getElementById('rate-display');
+        const revenueLostDisplay = document.getElementById('revenue-lost');
+        const categoryLossText = document.getElementById('category-loss-text');
+        const heatmapBars = document.querySelectorAll('.bar');
+        const swotModalOverlay = document.getElementById('swot-modal-overlay');
+        const swotTitle = document.getElementById('swot-title');
+        const swotGridContent = document.getElementById('swot-grid-content');
+        const closeSwotModalButton = document.getElementById('close-swot-modal');
+        const reportButton = document.getElementById('report-button');
+        const problemInput = document.getElementById('problem-input');
+        const ticketList = document.getElementById('ticket-list');
+        const benchmarkModule = document.getElementById('benchmark-module');
+        const roiCanvas = document.getElementById('roi-chart');
+
+        let activeCategory = null;
+
+        // --- COST CALCULATOR LOGIC ---
+        function updateRevenueLost() {
+            const baseRate = parseInt(rateSlider.value) / 100;
+            rateDisplay.textContent = rateSlider.value;
+            const BASE_ANNUAL_REVENUE = 3500000;
+            let totalLoss = BASE_ANNUAL_REVENUE * baseRate;
+            let currentLossText = "Receita Anual Perdida:";
+            if (activeCategory && SWOTData[activeCategory]) {
+                totalLoss *= SWOTData[activeCategory].impact;
+                currentLossText = `Perda estimada por falhas em "${activeCategory}":`;
             }
+            revenueLostDisplay.textContent = 'R$ ' + totalLoss.toLocaleString('pt-BR', { minimumFractionDigits: 0 });
+            categoryLossText.textContent = currentLossText;
+            return totalLoss; // Retorna o valor de perda para o gráfico
+        }
+
+        // --- DEEP DIVE ANALYTICS LOGIC (Módulos 1 e 2) ---
+
+        function formatCurrency(amount) {
+            return 'R$ ' + amount.toLocaleString('pt-BR', { minimumFractionDigits: 0 });
+        }
+
+        function renderBenchmarkTable(data) {
+            let html = `
+                <h3><i data-feather="repeat"></i> Tabela de Benchmarking Competitivo</h3>
+                <table class="benchmark-table">
+                    <thead>
+                        <tr>
+                            <th>Métrica Chave</th>
+                            <th>Hotel Nacional (Status Atual)</th>
+                            <th>Média do Setor de Luxo (Benchmark)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            data.forEach(item => {
+                html += `
+                    <tr>
+                        <td>${item.metric}</td>
+                        <td class="danger">${item.nacional}</td>
+                        <td class="success">${item.benchmark}</td>
+                    </tr>
+                `;
+            });
+            html += `
+                    </tbody>
+                </table>
+            `;
+            benchmarkModule.innerHTML = html;
+        }
+
+        function renderROIChart(lossValue, roiData) {
+            const totalLoss = lossValue;
+            const gain = roiData.gain;
+            const cost = roiData.cost * -1; // Custo é negativo no gráfico de ROI
+            const netROI = totalLoss + gain + cost;
+
+            const data = {
+                labels: ['Perda Anual por Ineficiência', 'Ganho Anual com Upsell Otimizado', 'Custo Estimado da Solução (Ano 1)', 'ROI Líquido Projetado (Ano 1)'],
+                datasets: [{
+                    label: roiData.title,
+                    data: [totalLoss, gain, cost, netROI],
+                    backgroundColor: [
+                        '#ff453a', // Danger (Red)
+                        '#34c759', // Success (Green)
+                        '#0a84ff', // Primary (Blue)
+                        '#ff9f0a'  // Warning (Orange/Gold)
+                    ],
+                    borderColor: [
+                        '#ff453a',
+                        '#34c759',
+                        '#0a84ff',
+                        '#ff9f0a'
+                    ],
+                    borderWidth: 1
+                }]
+            };
+
+            const config = {
+                type: 'bar',
+                data: data,
+                options: {
+                    indexAxis: 'y', // Gráfico de barras horizontal
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                        title: {
+                            display: true,
+                            text: roiData.title,
+                            color: 'var(--color-text-light)',
+                            font: { size: 16, weight: '700' }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) { label += ': '; }
+                                    const value = Math.abs(context.parsed.x);
+                                    label += formatCurrency(value);
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: { color: 'var(--color-text-light)', callback: formatCurrency },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        },
+                        y: {
+                            ticks: { color: 'var(--color-text-light)' },
+                            grid: { color: 'rgba(255, 255, 255, 0.1)' }
+                        }
+                    }
+                }
+            };
+            
+            // Destrói a instância anterior do gráfico se existir
+            if (roiChart) { roiChart.destroy(); }
+
+            // Cria a nova instância do gráfico
+            roiChart = new Chart(roiCanvas, config);
+        }
+
+        function renderDeepDiveAnalytics(category, lossValue) {
+            const data = SWOTData[category].deepDive;
+            renderBenchmarkTable(data.benchmark);
+            renderROIChart(lossValue, data.roi);
+            feather.replace(); // Substitui os ícones na nova seção
+        }
+
+        // --- SWOT MODAL LOGIC (Integrado) ---
+        function renderSWOTModal(category) {
+            const data = SWOTData[category];
+            if (!data) return;
+            
+            // 1. Calculate Loss Value (needed for the chart)
+            const currentLossValue = updateRevenueLost(); // Ensure loss value is calculated for this category
+            
+            // 2. Render SWOT Quadrants
+            swotTitle.innerHTML = `<i data-feather="search"></i> Análise SWOT: ${category}`;
+            const renderItems = (items) => items.map(item => `<div class="swot-item"><h4><i data-feather="chevrons-right"></i> ${item.title}</h4><p>${item.detail}</p></div>`).join('');
+            const solutionBanner = `<div class="swot-solution-banner"><h3><i data-feather="tool"></i> Plano de Ação Recomendado (Intellisense AI)</h3><ul><li>Implementação do Sistema de Tickets Inteligentes para reduzir o tempo de resolução da Manutenção em 75%.</li><li>Lançamento do Módulo de Pré-Check-in e Upsell para otimizar a recepção e aumentar a receita por hóspede em 10%.</li><li>Integração do Módulo de Análise Preditiva para antecipar falhas operacionais antes que elas impactem o cliente.</li></ul></div>`;
+            
+            swotGridContent.innerHTML = `
+                <div class="swot-quadrant quadrant-strengths"><h3><i data-feather="shield"></i> Forças</h3>${renderItems(data.SWOT.strengths)}</div>
+                <div class="swot-quadrant quadrant-weaknesses"><h3><i data-feather="alert-triangle"></i> Fraquezas</h3>${renderItems(data.SWOT.weaknesses)}</div>
+                <div class="swot-quadrant quadrant-opportunities"><h3><i data-feather="trending-up"></i> Oportunidades</h3>${renderItems(data.SWOT.opportunities)}</div>
+                <div class="swot-quadrant quadrant-threats"><h3><i data-feather="cloud-lightning"></i> Ameaças</h3>${renderItems(data.SWOT.threats)}</div>
+                ${solutionBanner}`;
+
+            // 3. Render Deep Dive Analytics (Table and Chart)
+            renderDeepDiveAnalytics(category, currentLossValue);
+            
+            swotModalOverlay.classList.add('open');
+            feather.replace();
+        }
+
+        function closeSWOTModal() {
+            swotModalOverlay.classList.remove('open');
+            heatmapBars.forEach(b => b.classList.remove('active-drilldown', 'faded'));
+            activeCategory = null;
+            updateRevenueLost();
+            if (roiChart) { roiChart.destroy(); roiChart = null; }
+        }
+
+        // --- TICKET FIREBASE LOGIC ---
+
+        // 1. Report/Create Ticket
+        async function createTicket() {
+            if (!userId) return console.error("User not authenticated to create ticket.");
+            const problem = problemInput.value.trim();
+            if (!problem) return;
+
+            const ticketsCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'tickets');
+            try {
+                // Implementing exponential backoff for robust API call
+                let delay = 1000; // 1 second
+                for (let i = 0; i < 3; i++) { // Max 3 retries
+                    try {
+                        await addDoc(ticketsCollectionRef, {
+                            description: problem,
+                            status: 'open', 
+                            reportedBy: userId,
+                            createdAt: serverTimestamp(),
+                            updatedAt: serverTimestamp(),
+                        });
+                        problemInput.value = '';
+                        console.log("Ticket created successfully.");
+                        return; // Exit on success
+                    } catch (e) {
+                        if (i === 2) throw e; // Throw error after final attempt
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        delay *= 2; // Double the delay
+                    }
+                }
+            } catch (e) {
+                console.error("Error adding document after retries: ", e);
+                // Simple on-screen feedback instead of alert()
+                const feedback = document.createElement('p');
+                feedback.textContent = "Erro ao reportar ticket. Veja o console.";
+                feedback.style.color = 'var(--color-danger)';
+                ticketList.prepend(feedback);
+                setTimeout(() => feedback.remove(), 5000);
+            }
+        }
+
+        // 2. Resolve Ticket
+        async function resolveTicket(docId) {
+            const ticketRef = doc(db, 'artifacts', appId, 'public', 'data', 'tickets', docId);
+            try {
+                 // Implementing exponential backoff
+                let delay = 1000;
+                for (let i = 0; i < 3; i++) {
+                    try {
+                        await updateDoc(ticketRef, {
+                            status: 'resolved',
+                            resolvedBy: userId,
+                            updatedAt: serverTimestamp(),
+                        });
+                        console.log(`Ticket ${docId} resolved.`);
+                        return; // Exit on success
+                    } catch (e) {
+                        if (i === 2) throw e;
+                        await new Promise(resolve => setTimeout(resolve, delay));
+                        delay *= 2;
+                    }
+                }
+            } catch (e) {
+                console.error("Error resolving document after retries: ", e);
+            }
+        }
+
+        // 3. Render and Listen to Tickets (Real-time)
+        function setupTicketListener() {
+            if (!userId) return;
+
+            const ticketsCollectionRef = collection(db, 'artifacts', appId, 'public', 'data', 'tickets');
+            
+            // Query for all tickets
+            const q = query(ticketsCollectionRef);
+
+            const unsubscribe = onSnapshot(q, (snapshot) => {
+                let tickets = [];
+                snapshot.forEach((doc) => {
+                    tickets.push({ id: doc.id, ...doc.data() });
+                });
+
+                // Client-side sorting: Open tickets first, then newest first
+                tickets.sort((a, b) => {
+                    const statusA = a.status === 'open' ? 0 : 1;
+                    const statusB = b.status === 'open' ? 0 : 1;
+                    if (statusA !== statusB) return statusA - statusB; 
+                    
+                    const timeA = a.createdAt?.toMillis() || 0;
+                    const timeB = b.createdAt?.toMillis() || 0;
+                    return timeB - timeA;
+                });
+
+                renderTickets(tickets);
+            }, (error) => {
+                console.error("Error listening to tickets:", error);
+                ticketList.innerHTML = `<p style="color: var(--color-danger); text-align: center;">Erro ao carregar tickets.</p>`;
+            });
+
+            return unsubscribe;
+        }
+        
+        function renderTickets(tickets) {
+            ticketList.innerHTML = '';
+            if (tickets.length === 0) {
+                ticketList.innerHTML = `<p style="text-align: center; opacity: 0.5;">Nenhum ticket aberto no momento.</p>`;
+                return;
+            }
+
+            tickets.forEach(ticket => {
+                const isResolved = ticket.status === 'resolved';
+                const ticketCard = document.createElement('div');
+                ticketCard.className = `ticket-card ${isResolved ? 'resolved' : ''}`;
+
+                const statusText = isResolved ? 'Resolvido' : 'Aberto';
+                const statusClass = isResolved ? 'resolved' : 'open';
+
+                let timeString = 'Agora';
+                if (ticket.createdAt && ticket.createdAt.toDate) {
+                    timeString = ticket.createdAt.toDate().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                }
+
+                ticketCard.innerHTML = `
+                    <div class="ticket-info">
+                        <strong>${ticket.description}</strong>
+                        <small style="opacity: 0.7; display: block;">Reportado por: ${ticket.reportedBy.substring(0, 8)}... (${timeString})</small>
+                    </div>
+                    <div class="ticket-status">
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                        ${!isResolved ? `<button class="resolve-btn" data-id="${ticket.id}">Resolver</button>` : ''}
+                    </div>
+                `;
+
+                if (!isResolved) {
+                    const resolveBtn = ticketCard.querySelector('.resolve-btn');
+                    resolveBtn.addEventListener('click', () => resolveTicket(ticket.id));
+                }
+
+                ticketList.appendChild(ticketCard);
+            });
+        }
+
+        // --- DOM Event Listeners and Initialization ---
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Wait for authentication before proceeding with Firestore operations
+            const isAuthenticated = await authenticateUser();
+            if (isAuthenticated) {
+                setupTicketListener();
+            }
+
+            feather.replace();
             rateSlider.addEventListener('input', updateRevenueLost);
+            
             heatmapBars.forEach(bar => {
                 bar.addEventListener('click', () => {
                     const category = bar.dataset.category;
+                    // Reset chart if exists before changing category, although renderROIChart handles destruction
                     if (activeCategory === category) { closeSWOTModal(); return; }
+                    
+                    // Logic to set active category and styles
                     activeCategory = category;
                     heatmapBars.forEach(b => b.classList.add('faded'));
                     bar.classList.remove('faded');
                     bar.classList.add('active-drilldown');
-                    updateRevenueLost();
+                    
+                    // Render the full modal with updated loss calculation
                     renderSWOTModal(category);
                 });
             });
+
             closeSwotModalButton.addEventListener('click', closeSWOTModal);
             swotModalOverlay.addEventListener('click', (e) => { if (e.target === swotModalOverlay) closeSWOTModal(); });
+            
+            reportButton.addEventListener('click', createTicket);
+
+            // Trigger initial calculation
             updateRevenueLost();
-            // Lógica do Simulador de Tickets (simplificada para brevidade)
-            const reportButton = document.getElementById('report-button');
-            const problemInput = document.getElementById('problem-input');
-            const ticketList = document.getElementById('ticket-list');
-            reportButton.addEventListener('click', () => {
-                if(problemInput.value.trim() === '') return;
-                const ticketCard = document.createElement('div');
-                ticketCard.className = 'ticket-card';
-                ticketCard.innerHTML = `<strong>Novo Ticket:</strong> ${problemInput.value}`;
-                ticketList.prepend(ticketCard);
-                problemInput.value = '';
-            });
         });
     </script>
 </body>
